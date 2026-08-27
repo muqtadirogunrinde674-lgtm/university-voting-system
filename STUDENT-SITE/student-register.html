@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Student Registration | UniVote</title>
+
+<link
+    rel="stylesheet"
+    href="student-register.css"
+>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+</head>
+
+<body>
+
+<main class="register-page">
+
+    <section class="register-card">
+
+        <!-- BRAND -->
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                C
+            </div>
+
+            <div>
+
+                <h1>CollegeVote</h1>
+
+                <span>
+                    Student Voting Portal
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- HEADER -->
+
+        <div class="register-header">
+
+            <span class="section-label">
+                STUDENT REGISTRATION
+            </span>
+
+            <h2>
+                Create Your Account
+            </h2>
+
+            <p>
+                Register your student account to access
+                the UniVote voting portal.
+            </p>
+
+        </div>
+
+
+        <!-- MESSAGE -->
+
+        <div
+            id="message"
+            class="message"
+        ></div>
+
+
+        <!-- FORM -->
+
+        <form
+            id="registerForm"
+            novalidate
+        >
+
+            <!-- FULL NAME -->
+
+            <div class="form-group">
+
+                <label for="name">
+                    Full Name
+                </label>
+
+                <input
+                    type="text"
+                    id="name"
+                    placeholder="Enter your full name"
+                    autocomplete="name"
+                    required
+                >
+
+            </div>
+
+
+            <!-- MATRIC NUMBER -->
+
+            <div class="form-group">
+
+                <label for="matricNumber">
+                    Matric Number
+                </label>
+
+                <input
+                    type="text"
+                    id="matricNumber"
+                    placeholder="e.g. TEST/007"
+                    autocomplete="username"
+                    required
+                >
+
+                <small>
+                    Enter your official student matric number.
+                </small>
+
+            </div>
+
+
+            <!-- EMAIL -->
+
+            <div class="form-group">
+
+                <label for="email">
+                    Email Address
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Enter your email address"
+                    autocomplete="email"
+                    required
+                >
+
+            </div>
+
+
+            <!-- LEVEL -->
+
+            <div class="form-group">
+
+                <label for="level">
+                    Level
+                </label>
+
+                <select
+                    id="level"
+                    required
+                >
+
+                    <option value="">
+                        Select your level
+                    </option>
+
+                    <option value="100 Level">
+                        100 Level
+                    </option>
+
+                    <option value="200 Level">
+                        200 Level
+                    </option>
+
+                    <option value="300 Level">
+                        300 Level
+                    </option>
+
+                    <option value="400 Level">
+                        400 Level
+                    </option>
+
+                    <option value="500 Level">
+                        500 Level
+                    </option>
+
+                    <option value="600 Level">
+                        600 Level
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- DEPARTMENT -->
+
+            <div class="form-group">
+
+                <label for="department">
+                    Department
+                </label>
+
+                <input
+                    type="text"
+                    id="department"
+                    placeholder="e.g. Computer Science"
+                    required
+                >
+
+            </div>
+
+
+            <!-- PASSWORD -->
+
+            <div class="form-group">
+
+                <label for="password">
+                    Create Password
+                </label>
+
+                <div class="password-wrapper">
+
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Create a password"
+                        autocomplete="new-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        data-target="password"
+                    >
+                        Show
+                    </button>
+
+                </div>
+
+                <small>
+                    Password must be at least 8 characters.
+                </small>
+
+            </div>
+
+
+            <!-- CONFIRM PASSWORD -->
+
+            <div class="form-group">
+
+                <label for="confirmPassword">
+                    Confirm Password
+                </label>
+
+                <div class="password-wrapper">
+
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        placeholder="Confirm your password"
+                        autocomplete="new-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        data-target="confirmPassword"
+                    >
+                        Show
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- INFORMATION -->
+
+            <div class="approval-notice">
+
+                <span class="approval-icon">
+                    🔐
+                </span>
+
+                <div>
+
+                    <strong>
+                        Account Approval
+                    </strong>
+
+                    <p>
+                        After registration, an administrator
+                        must approve your account before you
+                        can vote.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- REGISTER -->
+
+            <button
+                type="submit"
+                id="registerBtn"
+                class="register-btn"
+            >
+                Create Student Account
+            </button>
+
+        </form>
+
+
+        <!-- LOGIN -->
+
+        <div class="login-section">
+
+            <p>
+                Already have an account?
+            </p>
+
+            <a href="student-login.html">
+                Login to UniVote
+            </a>
+
+        </div>
+
+
+        <!-- BACK -->
+
+        <a
+            href="index.html"
+            class="back-link"
+        >
+            ← Back to Home
+        </a>
+
+    </section>
+
+</main>
+
+
+<!-- FOOTER -->
+
+<footer>
+
+    <p>
+        © 2026 UniVote — University E-Voting System
+    </p>
+
+</footer>
+
+
+<script src="student-register.js"></script>
+
+
+</body>
+
+</html>

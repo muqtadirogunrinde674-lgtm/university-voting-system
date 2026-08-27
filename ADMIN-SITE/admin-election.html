@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Election Management</title>
+
+    <link rel="stylesheet" href="admin-election.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+
+    <div class="page">
+
+        <!-- HEADER -->
+        <div class="page-header">
+
+            <div>
+                <span class="eyebrow">ADMINISTRATION</span>
+
+                <h1>Election Management</h1>
+
+                <p>
+                    Create and manage school elections.
+                </p>
+            </div>
+
+            <button
+                id="backBtn"
+                class="back-btn"
+            >
+                ← Dashboard
+            </button>
+
+        </div>
+
+
+        <!-- CREATE ELECTION -->
+        <section class="form-card">
+
+            <div class="card-header">
+
+                <div>
+                    <h2>Create New Election</h2>
+
+                    <p>
+                        Add the basic details for the election.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <form id="electionForm">
+
+                <!-- ELECTION NAME -->
+                <div class="form-group">
+
+                    <label for="electionName">
+                        Election Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="electionName"
+                        placeholder="e.g. SUG Election 2026"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- DATES -->
+                <div class="date-grid">
+
+                    <div class="form-group">
+
+                        <label for="startDate">
+                            Start Date
+                        </label>
+
+                        <input
+                            type="date"
+                            id="startDate"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="endDate">
+                            End Date
+                        </label>
+
+                        <input
+                            type="date"
+                            id="endDate"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="create-btn"
+                >
+                    CREATE ELECTION
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- ELECTION LIST -->
+        <section class="elections-section">
+
+            <div class="section-title">
+
+                <div>
+                    <h2>Existing Elections</h2>
+
+                    <p>
+                        Elections currently stored in the system.
+                    </p>
+                </div>
+
+                <span
+                    id="electionCount"
+                    class="count"
+                >
+                    0
+                </span>
+
+            </div>
+
+
+            <div
+                id="electionList"
+                class="election-list"
+            ></div>
+
+
+            <div
+                id="emptyState"
+                class="empty-state"
+            >
+
+                <div class="empty-icon">
+                    🗳️
+                </div>
+
+                <h3>
+                    No Elections Yet
+                </h3>
+
+                <p>
+                    Create your first election above.
+                </p>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <script src="admin-election.js"></script>
+
+</body>
+</html>

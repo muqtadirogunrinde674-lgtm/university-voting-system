@@ -1,0 +1,582 @@
+/* =========================================================
+   UNIVOTE ADMIN SETTINGS
+========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f5f7fb;
+    color: #172033;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+
+/* =========================================================
+   LAYOUT
+========================================================= */
+
+.admin-layout {
+    min-height: 100vh;
+    display: flex;
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar {
+    width: 250px;
+    min-height: 100vh;
+    background: #111827;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 16px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 10px 30px;
+}
+
+.brand-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.brand-text h2 {
+    font-size: 20px;
+    margin-bottom: 3px;
+}
+
+.brand-text span {
+    font-size: 9px;
+    color: #9ca3af;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+}
+
+
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.sidebar nav a {
+    text-decoration: none;
+    color: #aeb7c7;
+    padding: 13px 14px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.2s ease;
+}
+
+.sidebar nav a span {
+    width: 22px;
+    text-align: center;
+}
+
+.sidebar nav a:hover {
+    background: #1f2937;
+    color: white;
+}
+
+.sidebar nav a.active {
+    background: #2563eb;
+    color: white;
+}
+
+
+.logout-btn {
+    margin-top: auto;
+    border: none;
+    background: #1f2937;
+    color: #cbd5e1;
+    padding: 13px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s ease;
+}
+
+.logout-btn:hover {
+    background: #374151;
+    color: white;
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main-content {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    min-height: 100vh;
+    padding: 35px 45px 60px;
+}
+
+
+/* =========================================================
+   TOPBAR
+========================================================= */
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    margin-bottom: 35px;
+}
+
+.page-label {
+    color: #2563eb;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+}
+
+.topbar h1 {
+    font-size: 34px;
+    margin: 7px 0 8px;
+    color: #111827;
+}
+
+.topbar p {
+    color: #64748b;
+    font-size: 14px;
+}
+
+
+.admin-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: white;
+    padding: 9px 15px 9px 9px;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 5px 20px rgba(15, 23, 42, 0.05);
+}
+
+.admin-avatar {
+    width: 43px;
+    height: 43px;
+    border-radius: 50%;
+    background: #2563eb;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 17px;
+}
+
+.admin-profile strong {
+    display: block;
+    font-size: 14px;
+    color: #111827;
+}
+
+.admin-profile span {
+    display: block;
+    margin-top: 4px;
+    font-size: 11px;
+    color: #64748b;
+}
+
+
+/* =========================================================
+   SETTINGS WRAPPER
+========================================================= */
+
+.settings-wrapper {
+    max-width: 900px;
+}
+
+
+/* =========================================================
+   SETTINGS CARD
+========================================================= */
+
+.settings-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 32px;
+    box-shadow: 0 10px 35px rgba(15, 23, 42, 0.06);
+}
+
+
+.card-heading,
+.security-heading {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 28px;
+}
+
+.heading-icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: #eff6ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.card-heading h2,
+.security-heading h2 {
+    font-size: 18px;
+    color: #111827;
+    margin-bottom: 6px;
+}
+
+.card-heading p,
+.security-heading p {
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+#settingsForm {
+    width: 100%;
+}
+
+.form-group {
+    margin-bottom: 22px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.form-group input {
+    width: 100%;
+    height: 48px;
+    border: 1px solid #dbe1ea;
+    border-radius: 10px;
+    padding: 0 14px;
+    outline: none;
+    color: #111827;
+    background: #fff;
+    transition: 0.2s ease;
+}
+
+.form-group input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+.form-group input::placeholder {
+    color: #9ca3af;
+}
+
+.form-group small {
+    display: block;
+    margin-top: 7px;
+    color: #94a3b8;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   DIVIDER
+========================================================= */
+
+.divider {
+    height: 1px;
+    background: #e5e7eb;
+    margin: 32px 0;
+}
+
+
+/* =========================================================
+   PASSWORD FIELD
+========================================================= */
+
+.password-field {
+    position: relative;
+}
+
+.password-field input {
+    padding-right: 70px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    color: #2563eb;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 7px;
+}
+
+.password-toggle:hover {
+    color: #1d4ed8;
+}
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+.message {
+    display: none;
+    padding: 12px 14px;
+    border-radius: 9px;
+    margin: 8px 0 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.message.error {
+    display: block;
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+.message.success {
+    display: block;
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 5px;
+}
+
+.save-btn {
+    border: none;
+    background: #2563eb;
+    color: white;
+    padding: 13px 25px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 13px;
+    transition: 0.2s ease;
+}
+
+.save-btn:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+.save-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+
+/* =========================================================
+   SECURITY NOTICE
+========================================================= */
+
+.security-notice {
+    margin-top: 20px;
+    background: #eff6ff;
+    border: 1px solid #dbeafe;
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.notice-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 18px;
+}
+
+.security-notice h3 {
+    color: #1e3a8a;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.security-notice p {
+    color: #475569;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .sidebar {
+        width: 210px;
+    }
+
+    .main-content {
+        margin-left: 210px;
+        width: calc(100% - 210px);
+        padding: 30px;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .admin-layout {
+        display: block;
+    }
+
+    .sidebar {
+        position: relative;
+        width: 100%;
+        min-height: auto;
+        padding: 15px;
+    }
+
+    .brand {
+        padding-bottom: 18px;
+    }
+
+    .sidebar nav {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .sidebar nav a {
+        justify-content: center;
+        flex-direction: column;
+        gap: 5px;
+        padding: 10px 5px;
+        font-size: 11px;
+    }
+
+    .logout-btn {
+        margin-top: 15px;
+    }
+
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 25px 18px 40px;
+    }
+
+    .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+        margin-bottom: 25px;
+    }
+
+    .topbar h1 {
+        font-size: 28px;
+    }
+
+    .admin-profile {
+        width: 100%;
+    }
+
+    .settings-card {
+        padding: 22px;
+    }
+
+}
+
+
+@media (max-width: 450px) {
+
+    .sidebar nav {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .settings-card {
+        padding: 18px;
+        border-radius: 14px;
+    }
+
+    .card-heading,
+    .security-heading {
+        gap: 10px;
+    }
+
+    .heading-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 17px;
+    }
+
+    .form-actions {
+        display: block;
+    }
+
+    .save-btn {
+        width: 100%;
+    }
+
+    .security-notice {
+        padding: 16px;
+    }
+
+}

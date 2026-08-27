@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Vote | UniVote</title>
+
+    <link rel="stylesheet" href="vote.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+
+<header class="topbar">
+
+    <div class="brand">
+        <div class="brand-logo">U</div>
+
+        <div>
+            <h2>UniVote</h2>
+            <span>STUDENT VOTING PORTAL</span>
+        </div>
+    </div>
+
+    <button id="backElectionBtn" class="back-btn">
+        ← Elections
+    </button>
+
+</header>
+
+
+<main class="page">
+
+    <section class="page-header">
+
+        <span class="eyebrow">
+            CAST YOUR VOTE
+        </span>
+
+        <h1 id="electionTitle">
+            Election
+        </h1>
+
+        <p id="electionDescription">
+            Select your preferred candidate.
+        </p>
+
+    </section>
+
+
+    <div class="notice">
+        <span>🗳️</span>
+
+        <div>
+            <strong>Select one candidate for each position.</strong>
+
+            <p>
+                Your selections will be saved while you continue voting.
+            </p>
+        </div>
+    </div>
+
+
+    <section id="positionsContainer"></section>
+
+
+    <div
+        id="emptyState"
+        class="empty-state"
+        style="display:none;"
+    >
+
+        <div>🗳️</div>
+
+        <h2>No Candidates Found</h2>
+
+        <p>
+            There are currently no candidates available for this election.
+        </p>
+
+        <button
+            id="emptyBackBtn"
+            class="secondary-btn"
+        >
+            ← Back to Elections
+        </button>
+
+    </div>
+
+
+    <section class="bottom-bar">
+
+        <div class="selection-summary">
+
+            <strong id="selectedCount">
+                0
+            </strong>
+
+            <span>
+                position(s) selected
+            </span>
+
+        </div>
+
+
+        <button
+            id="continueBtn"
+            class="continue-btn"
+        >
+            CONTINUE VOTING →
+        </button>
+
+    </section>
+
+</main>
+
+
+<script src="vote.js"></script>
+
+</body>
+</html>

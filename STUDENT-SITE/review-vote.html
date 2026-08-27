@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Review Vote | UniVote</title>
+
+    <link
+        rel="stylesheet"
+        href="review-vote.css"
+    >
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+
+<body>
+
+
+<header class="topbar">
+
+    <div class="brand">
+
+        <div class="brand-logo">
+            U
+        </div>
+
+        <div>
+
+            <h2>UniVote</h2>
+
+            <span>
+                STUDENT VOTING PORTAL
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <button
+        id="backBtn"
+        class="back-btn"
+    >
+        ← Elections
+    </button>
+
+</header>
+
+
+
+<main class="page">
+
+
+    <section class="page-header">
+
+        <span class="eyebrow">
+            FINAL REVIEW
+        </span>
+
+        <h1>
+            Review Your Votes
+        </h1>
+
+        <p>
+            Check all your selections carefully before completing your vote.
+        </p>
+
+    </section>
+
+
+
+    <div class="security-notice">
+
+        <span>
+            🔒
+        </span>
+
+        <div>
+
+            <strong>
+                Final Submission
+            </strong>
+
+            <p>
+                Once you complete your vote, you cannot vote again.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <section class="review-card">
+
+        <div class="card-header">
+
+            <h2>
+                Your Selections
+            </h2>
+
+            <p id="selectionCount">
+                0 selections
+            </p>
+
+        </div>
+
+
+        <div
+            id="reviewList"
+            class="review-list"
+        ></div>
+
+
+        <div
+            id="emptyReview"
+            class="empty-review"
+            style="display:none;"
+        >
+
+            <div>
+                🗳️
+            </div>
+
+            <h3>
+                No Votes Selected
+            </h3>
+
+            <p>
+                Go back to the elections page and choose your candidates.
+            </p>
+
+            <button
+                id="backToElection"
+                class="secondary-btn"
+            >
+                ← Back to Elections
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <section class="actions">
+
+        <button
+            id="backAction"
+            class="secondary-btn"
+        >
+            ← Continue Voting
+        </button>
+
+
+        <button
+            id="completeBtn"
+            class="submit-btn"
+        >
+            COMPLETE MY VOTE ✓
+        </button>
+
+    </section>
+
+
+</main>
+
+
+
+<script src="review-vote.js"></script>
+
+</body>
+
+</html>

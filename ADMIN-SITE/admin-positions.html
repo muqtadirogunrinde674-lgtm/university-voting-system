@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Positions | UniVote</title>
+
+    <link rel="stylesheet" href="admin-positions.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+
+        <div class="sidebar-brand">
+            <div class="brand-icon">U</div>
+
+            <div>
+                <h2>UniVote</h2>
+                <span>Admin Panel</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="admin-dashboard.html" class="nav-item">
+                <span>▦</span>
+                Dashboard
+            </a>
+
+            <a href="admin-elections.html" class="nav-item">
+                <span>🗳️</span>
+                Elections
+            </a>
+
+            <a href="admin-candidates.html" class="nav-item">
+                <span>👤</span>
+                Candidates
+            </a>
+
+            <a href="admin-students.html" class="nav-item">
+                <span>👥</span>
+                Students
+            </a>
+
+            <a href="admin-positions.html" class="nav-item active">
+                <span>📋</span>
+                Positions
+            </a>
+
+            <a href="#" class="nav-item">
+                <span>📊</span>
+                Results
+            </a>
+
+            <a href="#" class="nav-item">
+                <span>📄</span>
+                Reports
+            </a>
+
+            <a href="#" class="nav-item">
+                <span>⚙️</span>
+                Settings
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <button id="logoutBtn" class="logout-btn">
+                <span>↪</span>
+                Logout
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <div class="page-title">
+                <h1>Positions</h1>
+                <p>Manage positions available in each election.</p>
+            </div>
+
+            <div class="admin-profile">
+
+                <div class="profile-avatar">A</div>
+
+                <div class="profile-info">
+                    <strong>Administrator</strong>
+                    <span>Super Admin</span>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <div class="content">
+
+            <section class="page-header">
+
+                <div>
+
+                    <span class="section-label">
+                        POSITION MANAGEMENT
+                    </span>
+
+                    <h2>Election Positions</h2>
+
+                    <p>
+                        Create and organize the positions students can contest for.
+                    </p>
+
+                </div>
+
+                <button
+                    class="primary-btn"
+                    id="addPositionBtn"
+                >
+                    + Add Position
+                </button>
+
+            </section>
+
+
+            <section class="stats">
+
+                <div class="stat-card">
+                    <div class="stat-icon">📋</div>
+
+                    <div>
+                        <small>Total Positions</small>
+                        <strong id="totalPositions">0</strong>
+                    </div>
+                </div>
+
+
+                <div class="stat-card">
+                    <div class="stat-icon">🗳️</div>
+
+                    <div>
+                        <small>Election Positions</small>
+                        <strong id="electionPositions">0</strong>
+                    </div>
+                </div>
+
+
+                <div class="stat-card">
+                    <div class="stat-icon">👤</div>
+
+                    <div>
+                        <small>Assigned Candidates</small>
+                        <strong id="assignedCandidates">0</strong>
+                    </div>
+                </div>
+
+
+                <div class="stat-card">
+                    <div class="stat-icon">🏆</div>
+
+                    <div>
+                        <small>Top Position</small>
+                        <strong id="topPosition">—</strong>
+                    </div>
+                </div>
+
+            </section>
+
+
+            <section class="toolbar">
+
+                <input
+                    type="search"
+                    id="searchPosition"
+                    placeholder="Search position..."
+                >
+
+                <select id="electionFilter">
+
+                    <option value="all">
+                        All Elections
+                    </option>
+
+                </select>
+
+            </section>
+
+
+            <section
+                class="position-list"
+                id="positionList"
+            ></section>
+
+
+            <section
+                class="empty-state"
+                id="emptyState"
+            >
+
+                <div>📋</div>
+
+                <h3>No positions found</h3>
+
+                <p>
+                    Add positions to your election.
+                </p>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+    <script src="admin-positions.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Elections | UniVote</title>
+
+    <link rel="stylesheet" href="election.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+
+<header class="student-header">
+
+    <div class="logo">
+        <div class="logo-icon">U</div>
+
+        <div>
+            <h2>UniVote</h2>
+            <span>Student Voting Portal</span>
+        </div>
+    </div>
+
+    <button id="logoutBtn" class="logout-btn">
+        Logout
+    </button>
+
+</header>
+
+
+<main class="container">
+
+    <section class="page-header">
+
+        <span class="eyebrow">
+            STUDENT ELECTIONS
+        </span>
+
+        <h1>
+            Choose an Election
+        </h1>
+
+        <p>
+            Select an election to cast your vote.
+        </p>
+
+    </section>
+
+
+    <div id="loading" class="loading">
+        Loading elections...
+    </div>
+
+
+    <section
+        id="electionList"
+        class="election-list"
+    ></section>
+
+
+    <section
+        id="emptyState"
+        class="empty-state"
+        style="display:none;"
+    >
+
+        <div class="empty-icon">
+            🗳️
+        </div>
+
+        <h2>
+            No Election Going On
+        </h2>
+
+        <p>
+            There are currently no elections available for voting.
+        </p>
+
+    </section>
+
+
+    <section
+        id="bottomAction"
+        class="bottom-action"
+        style="display:none;"
+    >
+
+        <div class="progress">
+
+            <strong id="completedCount">
+                0
+            </strong>
+
+            <span>
+                election(s) completed
+            </span>
+
+        </div>
+
+
+        <button
+            id="finishBtn"
+            class="finish-btn"
+        >
+            FINISH ELECTION
+        </button>
+
+    </section>
+
+</main>
+
+
+<script src="election.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Admin Settings | UniVote</title>
+
+    <link
+        rel="stylesheet"
+        href="admin-settings.css"
+    >
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+
+
+<body>
+
+<div class="admin-layout">
+
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                U
+            </div>
+
+            <div class="brand-text">
+
+                <h2>UniVote</h2>
+
+                <span>
+                    ADMIN PANEL
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <nav>
+
+            <a href="admin-dashboard.html">
+                <span>▦</span>
+                Dashboard
+            </a>
+
+            <a href="admin-election.html">
+                <span>🗳️</span>
+                Elections
+            </a>
+
+            <a href="admin-candidates.html">
+                <span>👥</span>
+                Candidates
+            </a>
+
+            <a href="admin-students.html">
+                <span>🎓</span>
+                Students
+            </a>
+
+            <a href="admin-results.html">
+                <span>📊</span>
+                Results
+            </a>
+
+            <a
+                href="admin-settings.html"
+                class="active"
+            >
+                <span>⚙️</span>
+                Settings
+            </a>
+
+        </nav>
+
+
+        <button
+            id="logoutBtn"
+            class="logout-btn"
+        >
+            ⇥ Logout
+        </button>
+
+    </aside>
+
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="main-content">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <div>
+
+                <span class="page-label">
+                    ADMINISTRATION
+                </span>
+
+                <h1>
+                    Settings
+                </h1>
+
+                <p>
+                    Manage your administrator account and
+                    security preferences.
+                </p>
+
+            </div>
+
+
+            <div class="admin-profile">
+
+                <div
+                    class="admin-avatar"
+                    id="adminAvatar"
+                >
+                    A
+                </div>
+
+                <div>
+
+                    <strong
+                        id="adminName"
+                    >
+                        Administrator
+                    </strong>
+
+                    <span
+                        id="adminUsername"
+                    >
+                        admin
+                    </span>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- ================= SETTINGS AREA ================= -->
+
+        <section class="settings-wrapper">
+
+
+            <!-- ACCOUNT CARD -->
+
+            <div class="settings-card">
+
+
+                <div class="card-heading">
+
+                    <div class="heading-icon">
+                        👤
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Administrator Profile
+                        </h2>
+
+                        <p>
+                            Update the information displayed
+                            throughout the admin panel.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <form id="settingsForm">
+
+
+                    <!-- ADMIN NAME -->
+
+                    <div class="form-group">
+
+                        <label for="adminNameInput">
+                            Admin Display Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="adminName"
+                            name="displayName"
+                            placeholder="Enter admin name"
+                            required
+                        >
+
+                        <small>
+                            This name will appear in the
+                            top-right corner of the dashboard.
+                        </small>
+
+                    </div>
+
+
+
+                    <!-- USERNAME -->
+
+                    <div class="form-group">
+
+                        <label for="adminUsernameInput">
+                            Username
+                        </label>
+
+                        <input
+                            type="text"
+                            id="adminUsernameInput"
+                            name="username"
+                            placeholder="Enter admin username"
+                            required
+                        >
+
+                    </div>
+
+
+
+                    <div class="divider"></div>
+
+
+
+                    <!-- SECURITY -->
+
+                    <div class="security-heading">
+
+                        <div class="heading-icon">
+                            🔐
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Change Password
+                            </h2>
+
+                            <p>
+                                Keep your administrator account secure.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- CURRENT PASSWORD -->
+
+                    <div class="form-group">
+
+                        <label for="currentPassword">
+                            Current Password
+                        </label>
+
+                        <div class="password-field">
+
+                            <input
+                                type="password"
+                                id="currentPassword"
+                                placeholder="Enter current password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-target="currentPassword"
+                            >
+                                Show
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- NEW PASSWORD -->
+
+                    <div class="form-group">
+
+                        <label for="newPassword">
+                            New Password
+                        </label>
+
+                        <div class="password-field">
+
+                            <input
+                                type="password"
+                                id="newPassword"
+                                placeholder="Enter new password"
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-target="newPassword"
+                            >
+                                Show
+                            </button>
+
+                        </div>
+
+                        <small>
+                            Leave blank if you only want to
+                            change your username or display name.
+                        </small>
+
+                    </div>
+
+
+
+                    <!-- CONFIRM PASSWORD -->
+
+                    <div class="form-group">
+
+                        <label for="confirmPassword">
+                            Confirm New Password
+                        </label>
+
+                        <div class="password-field">
+
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                placeholder="Confirm new password"
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-target="confirmPassword"
+                            >
+                                Show
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- MESSAGE -->
+
+                    <div
+                        id="message"
+                        class="message"
+                    ></div>
+
+
+
+                    <!-- ACTIONS -->
+
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            class="save-btn"
+                        >
+                            Save Changes
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+
+            <!-- SECURITY NOTICE -->
+
+            <div class="security-notice">
+
+                <div class="notice-icon">
+                    🛡️
+                </div>
+
+                <div>
+
+                    <h3>
+                        Account Security
+                    </h3>
+
+                    <p>
+                        Your administrator password is securely
+                        encrypted before being stored. After changing
+                        your password, you will be logged out and must
+                        use the new password the next time you sign in.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+</div>
+
+
+<script src="admin-settings.js"></script>
+
+</body>
+
+</html>

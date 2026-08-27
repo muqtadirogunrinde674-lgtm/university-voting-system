@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard | UniVote</title>
+
+    <link rel="stylesheet" href="admin-dashboard.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-brand">
+
+            <div class="brand-icon">
+                U
+            </div>
+
+            <div>
+                <h2>UniVote</h2>
+                <span>Admin Panel</span>
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <a href="admin-dashboard.html"
+               class="nav-item active">
+
+                <span>▦</span>
+                Dashboard
+
+            </a>
+
+
+            <a href="admin-elections.html"
+               class="nav-item">
+
+                <span>🗳️</span>
+                Elections
+
+            </a>
+
+
+            <a href="admin-candidates.html"
+               class="nav-item">
+
+                <span>👤</span>
+                Candidates
+
+            </a>
+
+
+            <a href="admin-students.html"
+               class="nav-item">
+
+                <span>👥</span>
+                Students
+
+            </a>
+
+
+            <a href="admin-positions.html"
+               class="nav-item">
+
+                <span>📋</span>
+                Positions
+
+            </a>
+
+
+            <a href="admin-results.html"
+               class="nav-item">
+
+                <span>📊</span>
+                Results
+
+            </a>
+
+
+            <a href="admin-settings.html"
+               class="nav-item">
+
+                <span>⚙️</span>
+                Settings
+
+            </a>
+               
+            <div class="sidebar-bottom">
+
+    <button id="logoutBtn" class="logout-btn">
+        <span>↪</span>
+        Logout
+    </button>
+
+</div>
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <button
+                id="logoutBtn"
+                class="logout-btn">
+
+                <span>↪</span>
+
+                Logout
+
+            </button>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main-content">
+
+
+        <!-- TOP BAR -->
+
+        <header class="topbar">
+
+            <div class="page-title">
+
+                <h1>
+                    Admin Dashboard
+                </h1>
+
+                <p>
+                    Manage your university voting system.
+                </p>
+
+            </div>
+
+
+            <div class="admin-profile">
+
+                <div class="profile-avatar">
+                    A
+                </div>
+
+                <div class="profile-info">
+
+                    <strong id="adminName">
+                        Administrator
+                    </strong>
+
+                    <span>
+                        Super Admin
+                    </span>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- CONTENT -->
+
+        <div class="content">
+
+
+            <!-- WELCOME -->
+
+            <section class="welcome-card">
+
+                <div>
+
+                    <span class="welcome-label">
+                        UNIVOTE ADMINISTRATION
+                    </span>
+
+                    <h2>
+                        Welcome back, Administrator 👋
+                    </h2>
+
+                    <p>
+                        Manage elections, students, candidates,
+                        positions and voting results from one place.
+                    </p>
+
+                </div>
+
+
+                <div class="welcome-icon">
+                    🗳️
+                </div>
+
+            </section>
+
+
+
+            <!-- STATISTICS -->
+
+            <section class="stats-grid">
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        🗳️
+                    </div>
+
+                    <div>
+
+                        <small>
+                            Total Elections
+                        </small>
+
+                        <strong id="totalElections">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        👥
+                    </div>
+
+                    <div>
+
+                        <small>
+                            Registered Students
+                        </small>
+
+                        <strong id="totalStudents">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        👤
+                    </div>
+
+                    <div>
+
+                        <small>
+                            Candidates
+                        </small>
+
+                        <strong id="totalCandidates">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        📊
+                    </div>
+
+                    <div>
+
+                        <small>
+                            Votes Cast
+                        </small>
+
+                        <strong id="totalVotes">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- QUICK ACTIONS -->
+
+            <section class="section">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-label">
+                            QUICK ACTIONS
+                        </span>
+
+                        <h2>
+                            Manage System
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="action-grid">
+
+
+                    <button
+                        class="action-card"
+                        data-page="admin-elections.html">
+
+                        <div class="action-icon blue">
+                            🗳️
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Create Election
+                            </h3>
+
+                            <p>
+                                Create and manage voting elections.
+                            </p>
+
+                        </div>
+
+                        <span class="arrow">
+                            →
+                        </span>
+
+                    </button>
+
+
+
+                    <button
+                        class="action-card"
+                        data-page="admin-students.html">
+
+                        <div class="action-icon green">
+                            👥
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Add Students
+                            </h3>
+
+                            <p>
+                                Register students who can vote.
+                            </p>
+
+                        </div>
+
+                        <span class="arrow">
+                            →
+                        </span>
+
+                    </button>
+
+
+
+                    <button
+                        class="action-card"
+                        data-page="admin-candidates.html">
+
+                        <div class="action-icon purple">
+                            👤
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Add Candidate
+                            </h3>
+
+                            <p>
+                                Register candidates for elections.
+                            </p>
+
+                        </div>
+
+                        <span class="arrow">
+                            →
+                        </span>
+
+                    </button>
+
+
+
+                    <button
+                        class="action-card"
+                        data-page="admin-results.html">
+
+                        <div class="action-icon orange">
+                            📊
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                View Results
+                            </h3>
+
+                            <p>
+                                Monitor votes and election results.
+                            </p>
+
+                        </div>
+
+                        <span class="arrow">
+                            →
+                        </span>
+
+                    </button>
+
+
+                </div>
+
+            </section>
+
+
+
+            <!-- SYSTEM OVERVIEW -->
+
+            <section class="section">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-label">
+                            SYSTEM OVERVIEW
+                        </span>
+
+                        <h2>
+                            Election Status
+                        </h2>
+
+                    </div>
+
+
+                    <a
+                        href="admin-elections.html"
+                        class="view-all">
+
+                        Manage Elections →
+
+                    </a>
+
+                </div>
+
+
+
+                <div
+                    id="electionOverview"
+                    class="election-overview">
+                </div>
+
+
+
+                <div
+                    id="emptyOverview"
+                    class="empty-overview">
+
+                    <div>
+                        🗳️
+                    </div>
+
+                    <h3>
+                        No elections yet
+                    </h3>
+
+                    <p>
+                        Create your first election to get started.
+                    </p>
+
+                    <a
+                        href="admin-elections.html"
+                        class="primary-btn">
+
+                        Create Election
+
+                    </a>
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+    </main>
+
+
+    <script src="admin-dashboard.js"></script>
+
+</body>
+</html>

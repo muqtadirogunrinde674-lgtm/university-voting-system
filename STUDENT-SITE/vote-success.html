@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Vote Successful | UniVote</title>
+
+    <link
+        rel="stylesheet"
+        href="vote-success.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================
+         NAVBAR
+    ====================================== -->
+
+    <header class="success-nav">
+
+        <a
+            href="student-dashboard.html"
+            class="brand"
+        >
+
+            <span class="brand-icon">
+                U
+            </span>
+
+            <span>
+                UniVote
+            </span>
+
+        </a>
+
+
+        <span class="secure-label">
+            🔐 Secure Election
+        </span>
+
+    </header>
+
+
+
+    <!-- =====================================
+         MAIN
+    ====================================== -->
+
+    <main class="success-container">
+
+        <section class="success-card">
+
+
+            <!-- SUCCESS ICON -->
+
+            <div class="success-icon">
+                ✓
+            </div>
+
+
+            <span class="success-label">
+                VOTE SUCCESSFULLY SUBMITTED
+            </span>
+
+
+            <h1>
+                Your Vote Has Been Cast! 🎉
+            </h1>
+
+
+            <p class="success-message">
+
+                Thank you for participating in the
+                <strong>SUG Election 2026</strong>.
+
+                Your ballot has been securely recorded.
+
+            </p>
+
+
+
+            <!-- =====================================
+                 REFERENCE
+            ====================================== -->
+
+            <div class="reference-box">
+
+                <span>
+                    VOTE REFERENCE
+                </span>
+
+                <strong id="voteReference">
+                    Loading...
+                </strong>
+
+                <p>
+                    Keep this reference for your records.
+                </p>
+
+            </div>
+
+
+
+            <!-- =====================================
+                 DETAILS
+            ====================================== -->
+
+            <div class="vote-details">
+
+
+                <div class="detail">
+
+                    <span>
+                        Election
+                    </span>
+
+                    <strong>
+                        SUG Election 2026
+                    </strong>
+
+                </div>
+
+
+
+                <div class="detail">
+
+                    <span>
+                        Status
+                    </span>
+
+                    <strong class="submitted">
+                        Submitted ✓
+                    </strong>
+
+                </div>
+
+
+
+                <div class="detail">
+
+                    <span>
+                        Submitted On
+                    </span>
+
+                    <strong id="submissionTime">
+                        Loading...
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =====================================
+                 NOTICE
+            ====================================== -->
+
+            <div class="success-notice">
+
+                <span>
+                    🔒
+                </span>
+
+
+                <div>
+
+                    <strong>
+                        Your ballot has been recorded
+                    </strong>
+
+                    <p>
+                        Your selections have been successfully
+                        submitted. You cannot vote again in this
+                        election.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =====================================
+                 ACTIONS
+            ====================================== -->
+
+            <div class="success-actions">
+
+
+                <a
+                    href="student-dashboard.html"
+                    class="dashboard-btn"
+                >
+                    Return to Dashboard
+                </a>
+
+
+                <button
+                    type="button"
+                    class="print-btn"
+                    id="printReceiptBtn"
+                >
+                    🖨️ Print Confirmation
+                </button>
+
+
+            </div>
+
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =====================================
+         FOOTER
+    ====================================== -->
+
+    <footer>
+
+        <p>
+            © 2026 UniVote — University E-Voting System
+        </p>
+
+    </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="vote-success.js"></script>
+
+</body>
+
+</html>

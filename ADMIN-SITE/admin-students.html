@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Students | UniVote Admin</title>
+
+    <link rel="stylesheet" href="admin-students.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">U</div>
+
+            <div class="brand-text">
+                <h2>UniVote</h2>
+                <span>ADMIN PANEL</span>
+            </div>
+        </div>
+
+        <nav>
+
+            <a href="admin-dashboard.html">
+                <span>▦</span>
+                Dashboard
+            </a>
+
+            <a href="admin-election.html">
+                <span>🗳️</span>
+                Elections
+            </a>
+
+            <a href="admin-candidates.html">
+                <span>👥</span>
+                Candidates
+            </a>
+
+            <a href="admin-students.html" class="active">
+                <span>🎓</span>
+                Students
+            </a>
+
+            <a href="admin-results.html">
+                <span>📊</span>
+                Results
+            </a>
+
+            <a href="admin-settings.html">
+                <span>⚙️</span>
+                Settings
+            </a>
+
+        </nav>
+
+        <button id="logoutBtn" class="logout-btn">
+            ⇥ Logout
+        </button>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <div>
+                <h1>Students</h1>
+                <p>Manage students eligible to vote.</p>
+            </div>
+
+            <button id="addStudentBtn" class="primary-btn">
+                + Add Student
+            </button>
+
+        </header>
+
+
+        <!-- STATS -->
+        <section class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+
+                <div>
+                    <span>Total Students</span>
+                    <strong id="totalStudents">0</strong>
+                </div>
+            </div>
+
+
+            <div class="stat-card">
+                <div class="stat-icon green">✓</div>
+
+                <div>
+                    <span>Eligible Voters</span>
+                    <strong id="eligibleStudents">0</strong>
+                </div>
+            </div>
+
+
+            <div class="stat-card">
+                <div class="stat-icon purple">🗳️</div>
+
+                <div>
+                    <span>Already Voted</span>
+                    <strong id="votedStudents">0</strong>
+                </div>
+            </div>
+
+
+            <div class="stat-card">
+                <div class="stat-icon orange">⏳</div>
+
+                <div>
+                    <span>Yet To Vote</span>
+                    <strong id="remainingStudents">0</strong>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- TOOLBAR -->
+        <section class="toolbar">
+
+            <div class="search-box">
+                <span>⌕</span>
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search name or matric number..."
+                >
+            </div>
+
+            <select id="statusFilter">
+
+                <option value="all">
+                    All Students
+                </option>
+
+                <option value="eligible">
+                    Eligible
+                </option>
+
+                <option value="not-eligible">
+                    Not Eligible
+                </option>
+
+                <option value="voted">
+                    Voted
+                </option>
+
+                <option value="not-voted">
+                    Not Voted
+                </option>
+
+            </select>
+
+        </section>
+
+
+        <!-- TABLE -->
+        <section class="table-card">
+
+            <div class="table-header">
+
+                <div>
+                    <h2>Registered Students</h2>
+
+                    <p>
+                        Only registered eligible students can access voting.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Student</th>
+                            <th>Matric Number</th>
+                            <th>Level</th>
+                            <th>Department</th>
+                            <th>Eligibility</th>
+                            <th>Voting Status</th>
+                            <th>Action</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="studentsTable"></tbody>
+
+                </table>
+
+            </div>
+
+
+            <div id="emptyState" class="empty-state">
+
+                <div>🎓</div>
+
+                <h3>No Students Found</h3>
+
+                <p>Add your first student.</p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- ADD / EDIT MODAL -->
+
+<div id="studentModal" class="modal-overlay">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <div>
+                <h2 id="modalTitle">Add Student</h2>
+
+                <p>
+                    Add a student who will create their own password.
+                </p>
+            </div>
+
+            <button id="closeModal" class="close-btn">
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="studentForm">
+
+            <input type="hidden" id="studentId">
+
+
+            <!-- FULL NAME -->
+            <div class="form-group">
+
+                <label>Full Name</label>
+
+                <input
+                    type="text"
+                    id="studentName"
+                    placeholder="Enter full name"
+                    required
+                >
+
+            </div>
+
+
+            <!-- MATRIC NUMBER -->
+            <div class="form-group">
+
+                <label>Matric Number</label>
+
+                <input
+                    type="text"
+                    id="matricNumber"
+                    placeholder="e.g. 2026/001"
+                    required
+                >
+
+            </div>
+
+
+            <!-- LEVEL + DEPARTMENT -->
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label>Level</label>
+
+                    <input
+                        type="text"
+                        id="studentLevel"
+                        placeholder="e.g. 200"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Department</label>
+
+                    <input
+                        type="text"
+                        id="studentDepartment"
+                        placeholder="e.g. Computer Science"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- ELIGIBILITY -->
+            <div class="eligibility-box">
+
+                <div>
+
+                    <strong>Eligible to Vote</strong>
+
+                    <p>
+                        Allow this student to enter the voting portal.
+                    </p>
+
+                </div>
+
+                <label class="switch">
+
+                    <input
+                        type="checkbox"
+                        id="eligible"
+                        checked
+                    >
+
+                    <span class="slider"></span>
+
+                </label>
+
+            </div>
+
+
+            <!-- INFO -->
+            <div class="student-password-info">
+
+                <strong>🔐 Student Password</strong>
+
+                <p>
+                    The student will create their own password during
+                    account registration. The administrator does not
+                    need to set a password.
+                </p>
+
+            </div>
+
+
+            <!-- ACTIONS -->
+            <div class="form-actions">
+
+                <button
+                    type="button"
+                    id="cancelBtn"
+                    class="secondary-btn"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="primary-btn"
+                >
+                    Save Student
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script src="admin-students.js"></script>
+
+</body>
+</html>

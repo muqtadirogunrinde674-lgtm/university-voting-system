@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Candidates | UniVote Admin</title>
+
+    <link rel="stylesheet" href="admin-candidates.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">U</div>
+
+            <div>
+                <h2>UniVote</h2>
+                <span>Admin Panel</span>
+            </div>
+        </div>
+
+        <nav>
+
+            <a href="admin-dashboard.html">
+                📊 Dashboard
+            </a>
+
+            <a href="admin-elections.html">
+                🗳️ Elections
+            </a>
+
+            <a href="admin-candidates.html" class="active">
+                👤 Candidates
+            </a>
+
+            <a href="admin-students.html">
+                👥 Students
+            </a>
+
+            <a href="admin-results.html">
+                📈 Results
+            </a>
+
+            <a href="admin-settings.html">
+                ⚙️ Settings
+            </a>
+
+        </nav>
+
+        <button id="logoutBtn" class="logout-btn">
+            🚪 Logout
+        </button>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <header class="topbar">
+
+            <div>
+                <h1>Candidate Management</h1>
+
+                <p>
+                    Add multiple candidates contesting for the same position.
+                </p>
+            </div>
+
+            <div class="admin-badge">
+                Administrator
+            </div>
+
+        </header>
+
+
+        <section class="content">
+
+            <div class="heading">
+
+                <span>CANDIDATE MANAGEMENT</span>
+
+                <h2>Create Candidate Group</h2>
+
+                <p>
+                    Select an election, enter a position, then add all candidates
+                    contesting for that position.
+                </p>
+
+            </div>
+
+
+            <!-- GROUP FORM -->
+            <div class="form-card">
+
+                <form id="candidateForm">
+
+                    <!-- ELECTION -->
+                    <div class="form-group">
+
+                        <label for="candidateElection">
+                            Election
+                        </label>
+
+                        <select id="candidateElection" required>
+
+                            <option value="">
+                                Select Election
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- POSITION -->
+                    <div class="form-group">
+
+                        <label for="candidatePosition">
+                            Position
+                        </label>
+
+                        <input
+                            type="text"
+                            id="candidatePosition"
+                            placeholder="e.g. SUG President"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- CANDIDATES -->
+                    <div class="candidates-section">
+
+                        <div class="section-title">
+
+                            <div>
+                                <h3>Candidates</h3>
+
+                                <p>
+                                    Add everyone contesting for this position.
+                                </p>
+                            </div>
+
+                            <span id="candidateCount">
+                                1 Candidate
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            id="candidateInputs"
+                            class="candidate-inputs"
+                        ></div>
+
+
+                        <button
+                            type="button"
+                            id="addCandidateBtn"
+                            class="add-candidate-btn"
+                        >
+                            + Add Another Candidate
+                        </button>
+
+                    </div>
+
+
+                    <!-- SAVE -->
+                    <button
+                        type="submit"
+                        class="primary-btn"
+                    >
+                        SAVE ALL CANDIDATES
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- REGISTERED GROUPS -->
+            <div class="list-heading">
+
+                <div>
+
+                    <span>REGISTERED CANDIDATES</span>
+
+                    <h2>Candidate Groups</h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="candidateList"
+                class="candidate-list"
+            ></div>
+
+
+            <div
+                id="emptyState"
+                class="empty-state"
+            >
+
+                <div>👤</div>
+
+                <h3>No Candidates Yet</h3>
+
+                <p>
+                    Candidate groups created by the admin will appear here.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script src="admin-candidates.js"></script>
+
+</body>
+</html>

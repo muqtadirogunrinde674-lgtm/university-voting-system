@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Vote Ballots | UniVote Admin</title>
+
+    <link rel="stylesheet" href="admin-vote-ballots.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo-area">
+            <div class="logo">U</div>
+
+            <div>
+                <h2>UniVote</h2>
+                <span>ADMIN PANEL</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="admin-dashboard.html">
+                <span>▦</span>
+                Dashboard
+            </a>
+
+            <a href="admin-election.html">
+                <span>🗳️</span>
+                Elections
+            </a>
+
+            <a href="admin-candidates.html">
+                <span>👤</span>
+                Candidates
+            </a>
+
+            <a href="admin-students.html">
+                <span>🎓</span>
+                Students
+            </a>
+
+            <a href="admin-vote-ballots.html" class="active">
+                <span>📋</span>
+                Vote Ballots
+            </a>
+
+            <a href="admin-results.html">
+                <span>📊</span>
+                Results
+            </a>
+
+            <a href="admin-settings.html">
+                <span>⚙️</span>
+                Settings
+            </a>
+
+        </nav>
+
+        <button id="logoutBtn" class="logout-btn">
+            ⇥ Logout
+        </button>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+
+            <div>
+                <span class="page-label">ADMINISTRATION</span>
+                <h1>Vote Ballots</h1>
+            </div>
+
+            <div class="admin-profile">
+                <div class="profile-icon">A</div>
+
+                <div>
+                    <strong>Administrator</strong>
+                    <small>Election Admin</small>
+                </div>
+            </div>
+
+        </header>
+
+
+        <!-- CONTENT -->
+        <section class="content">
+
+            <!-- STAT CARDS -->
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <div class="stat-icon">🗳️</div>
+
+                    <div>
+                        <span>Total Ballots</span>
+                        <strong id="totalBallots">0</strong>
+                    </div>
+                </div>
+
+
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+
+                    <div>
+                        <span>Students Voted</span>
+                        <strong id="studentsVoted">0</strong>
+                    </div>
+                </div>
+
+
+                <div class="stat-card">
+                    <div class="stat-icon">📌</div>
+
+                    <div>
+                        <span>Latest Vote</span>
+                        <strong id="latestVote">—</strong>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- TOOLBAR -->
+            <div class="toolbar">
+
+                <div>
+                    <h2>Submitted Ballots</h2>
+
+                    <p>
+                        View every completed student ballot.
+                    </p>
+                </div>
+
+
+                <div class="toolbar-actions">
+
+                    <input
+                        type="search"
+                        id="searchInput"
+                        placeholder="Search name or matric..."
+                    >
+
+                    <button
+                        id="refreshBtn"
+                        class="refresh-btn"
+                    >
+                        ↻ Refresh
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- FILTER -->
+            <div class="filter-bar">
+
+                <label for="electionFilter">
+                    Election
+                </label>
+
+                <select id="electionFilter">
+
+                    <option value="all">
+                        All Elections
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- TABLE -->
+            <div class="table-card">
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>#</th>
+                                <th>Student</th>
+                                <th>Matric Number</th>
+                                <th>Department</th>
+                                <th>Level</th>
+                                <th>Selections</th>
+                                <th>Submitted</th>
+                                <th>Action</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="ballotsTableBody">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <!-- EMPTY STATE -->
+                <div
+                    id="emptyState"
+                    class="empty-state"
+                >
+
+                    <div class="empty-icon">
+                        📋
+                    </div>
+
+                    <h3>No Vote Ballots Yet</h3>
+
+                    <p>
+                        Submitted student votes will appear here.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- BALLOT DETAILS MODAL -->
+
+<div
+    id="ballotModal"
+    class="modal"
+>
+
+    <div class="modal-box">
+
+        <button
+            id="closeModal"
+            class="close-modal"
+        >
+            ×
+        </button>
+
+
+        <div class="modal-header">
+
+            <span class="page-label">
+                BALLOT DETAILS
+            </span>
+
+            <h2 id="modalStudentName">
+                Student
+            </h2>
+
+            <p id="modalStudentMatric">
+                —
+            </p>
+
+        </div>
+
+
+        <div class="student-details">
+
+            <div>
+                <span>Department</span>
+                <strong id="modalDepartment">—</strong>
+            </div>
+
+            <div>
+                <span>Level</span>
+                <strong id="modalLevel">—</strong>
+            </div>
+
+            <div>
+                <span>Submitted</span>
+                <strong id="modalSubmitted">—</strong>
+            </div>
+
+        </div>
+
+
+        <h3 class="selection-title">
+            Candidate Selections
+        </h3>
+
+
+        <div
+            id="modalSelections"
+            class="modal-selections"
+        ></div>
+
+
+        <div class="ballot-id">
+
+            <span>Ballot ID</span>
+
+            <strong id="modalBallotId">
+                —
+            </strong>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="admin-vote-ballots.js"></script>
+
+</body>
+</html>

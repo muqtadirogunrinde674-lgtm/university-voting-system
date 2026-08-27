@@ -1,0 +1,408 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f7fb;
+    color: #172033;
+}
+
+
+/* HEADER */
+
+.student-header {
+    height: 70px;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+
+    padding: 0 6%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-icon {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 9px;
+
+    background: #2563eb;
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: bold;
+}
+
+.logo h2 {
+    font-size: 17px;
+}
+
+.logo span {
+    display: block;
+
+    margin-top: 2px;
+
+    color: #9ca3af;
+
+    font-size: 9px;
+}
+
+.logout-btn {
+    border: 1px solid #fecaca;
+
+    background: white;
+
+    color: #dc2626;
+
+    padding: 9px 14px;
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    font-size: 10px;
+}
+
+
+/* CONTAINER */
+
+.container {
+    width: min(850px, 92%);
+
+    margin: auto;
+
+    padding: 40px 0 100px;
+}
+
+
+/* HEADER */
+
+.page-header {
+    text-align: center;
+
+    margin-bottom: 30px;
+}
+
+.eyebrow {
+    color: #2563eb;
+
+    font-size: 9px;
+
+    font-weight: bold;
+
+    letter-spacing: 1.5px;
+}
+
+.page-header h1 {
+    margin-top: 8px;
+
+    font-size: 27px;
+}
+
+.page-header p {
+    margin-top: 8px;
+
+    color: #6b7280;
+
+    font-size: 11px;
+}
+
+
+/* LOADING */
+
+.loading {
+    text-align: center;
+
+    padding: 40px;
+
+    color: #6b7280;
+
+    font-size: 11px;
+}
+
+
+/* ELECTION LIST */
+
+.election-list {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 14px;
+}
+
+.election-card {
+    background: white;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 12px;
+
+    padding: 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.election-card:hover {
+    border-color: #93c5fd;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 20px rgba(0,0,0,0.05);
+}
+
+.election-card.completed {
+    border-color: #86efac;
+
+    background: #f0fdf4;
+}
+
+.election-left {
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+}
+
+.election-icon {
+    width: 48px;
+
+    height: 48px;
+
+    border-radius: 10px;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 21px;
+
+    flex-shrink: 0;
+}
+
+.election-info h2 {
+    font-size: 14px;
+}
+
+.election-info p {
+    margin-top: 6px;
+
+    color: #6b7280;
+
+    font-size: 9px;
+}
+
+.election-right {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+.status {
+    padding: 7px 10px;
+
+    border-radius: 20px;
+
+    font-size: 8px;
+
+    font-weight: bold;
+
+    white-space: nowrap;
+}
+
+.status.available {
+    background: #dcfce7;
+
+    color: #15803d;
+}
+
+.status.completed {
+    background: #dbeafe;
+
+    color: #1d4ed8;
+}
+
+.status.empty {
+    background: #f3f4f6;
+
+    color: #6b7280;
+}
+
+.arrow {
+    color: #9ca3af;
+
+    font-size: 16px;
+}
+
+
+/* EMPTY */
+
+.empty-state {
+    background: white;
+
+    border: 1px dashed #d1d5db;
+
+    border-radius: 12px;
+
+    padding: 60px 20px;
+
+    text-align: center;
+}
+
+.empty-icon {
+    font-size: 40px;
+}
+
+.empty-state h2 {
+    margin-top: 12px;
+
+    font-size: 17px;
+}
+
+.empty-state p {
+    margin-top: 7px;
+
+    color: #9ca3af;
+
+    font-size: 10px;
+}
+
+
+/* BOTTOM */
+
+.bottom-action {
+    position: sticky;
+
+    bottom: 15px;
+
+    margin-top: 25px;
+
+    background: white;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 12px;
+
+    padding: 15px 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,0.08);
+}
+
+.progress {
+    color: #6b7280;
+
+    font-size: 10px;
+}
+
+.progress strong {
+    color: #2563eb;
+
+    font-size: 16px;
+}
+
+.finish-btn {
+    border: none;
+
+    background: #2563eb;
+
+    color: white;
+
+    padding: 12px 18px;
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    font-size: 9px;
+
+    font-weight: bold;
+}
+
+.finish-btn:hover {
+    background: #1d4ed8;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    .student-header {
+        padding: 0 4%;
+    }
+
+    .container {
+        width: 94%;
+
+        padding-top: 28px;
+    }
+
+    .page-header h1 {
+        font-size: 23px;
+    }
+
+    .election-card {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .election-right {
+        width: 100%;
+
+        justify-content: space-between;
+    }
+
+    .bottom-action {
+        align-items: stretch;
+
+        flex-direction: column;
+    }
+
+    .finish-btn {
+        width: 100%;
+    }
+}

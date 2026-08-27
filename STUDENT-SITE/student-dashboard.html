@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Dashboard | UniVote</title>
+
+    <link rel="stylesheet" href="student-dashboard.css">
+</head>
+
+<body>
+
+<header class="dashboard-nav">
+
+    <div class="nav-left">
+        <a href="student-dashboard.html" class="brand">
+            <span class="brand-icon">C</span>
+            <span>CollegeVote</span>
+        </a>
+    </div>
+
+    <div class="nav-right">
+
+        <div class="student-profile">
+
+            <div class="avatar" id="studentAvatar">
+                S
+            </div>
+
+            <div class="student-details">
+                <strong id="studentName">Student</strong>
+                <span id="studentMatric">Loading...</span>
+            </div>
+
+        </div>
+
+        <button class="logout-btn" id="logoutBtn">
+            Logout
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="dashboard-container">
+
+    <!-- WELCOME -->
+
+    <section class="welcome-section">
+
+        <div>
+
+            <span class="section-label">
+                STUDENT PORTAL
+            </span>
+
+            <h1>
+                Welcome back, <span id="welcomeName">Student</span> 👋
+            </h1>
+
+            <p>
+                Your university election is currently active.
+                Make your voice count.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- ELECTION STATUS -->
+
+    <section class="election-banner">
+
+        <div class="banner-content">
+
+            <div class="banner-status">
+                <span class="live-dot"></span>
+                VOTING IS OPEN
+            </div>
+
+            <h2>
+                2026
+            </h2>
+
+            <p>
+                Select your preferred candidates for the available
+                positions and submit your vote.
+            </p>
+
+        </div>
+
+
+        <div class="countdown">
+
+            <span>VOTING CLOSES IN</span>
+
+            <div class="countdown-time">
+
+                <div>
+                    <strong id="days">05</strong>
+                    <small>Days</small>
+                </div>
+
+                <div>
+                    <strong id="hours">12</strong>
+                    <small>Hours</small>
+                </div>
+
+                <div>
+                    <strong id="minutes">45</strong>
+                    <small>Min</small>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- STATS -->
+
+    <section class="stats-grid">
+
+        <div class="stat-card">
+
+            <span class="stat-icon">🗳️</span>
+
+            <div>
+                <small>Election Status</small>
+                <strong>Active</strong>
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <span class="stat-icon">📋</span>
+
+            <div>
+                <small>Available Positions</small>
+                <strong>6</strong>
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <span class="stat-icon">📅</span>
+
+            <div>
+                <small>Election Ends</small>
+                <strong>Aug 30, 2026</strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- CURRENT ELECTION -->
+
+    <section class="content-section">
+
+        <div class="section-header">
+
+            <div>
+
+                <span class="section-label">
+                    CURRENT ELECTION
+                </span>
+
+                <h2>
+                    Student Union Government Election
+                </h2>
+
+            </div>
+
+            <span class="active-badge">
+                Active
+            </span>
+
+        </div>
+
+
+        <div class="election-content">
+
+            <div class="election-description">
+
+                <h3>
+                    SUG Election 2026
+                </h3>
+
+                <p>
+                    This election gives eligible students the
+                    opportunity to choose representatives who
+                    will serve the student community.
+                </p>
+
+                <div class="election-meta">
+
+                    <div>
+                        <span>Start Date</span>
+                        <strong>Aug 24, 2026</strong>
+                    </div>
+
+                    <div>
+                        <span>End Date</span>
+                        <strong>Aug 30, 2026</strong>
+                    </div>
+
+                    <div>
+                        <span>Positions</span>
+                        <strong>6</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="vote-action">
+
+                <div class="vote-status-icon">
+                    🗳️
+                </div>
+
+                <h3>
+                    You haven't voted yet
+                </h3>
+
+                <p>
+                    Your vote has not been submitted for
+                    this election.
+                </p>
+
+                <a href="election.html" class="start-vote-btn">
+                    Start Voting →
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- HOW IT WORKS -->
+
+    <section class="content-section">
+
+        <div class="section-header">
+
+            <div>
+
+                <span class="section-label">
+                    VOTING PROCESS
+                </span>
+
+                <h2>
+                    How to Vote
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="process-grid">
+
+            <div class="process-step">
+
+                <span>01</span>
+
+                <div>
+                    <h3>Review Candidates</h3>
+
+                    <p>
+                        Learn about the candidates before making
+                        your selection.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="process-step">
+
+                <span>02</span>
+
+                <div>
+                    <h3>Select Candidates</h3>
+
+                    <p>
+                        Choose one candidate for each available
+                        position.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="process-step">
+
+                <span>03</span>
+
+                <div>
+                    <h3>Review Your Vote</h3>
+
+                    <p>
+                        Check your selections carefully before
+                        submitting.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="process-step">
+
+                <span>04</span>
+
+                <div>
+                    <h3>Submit</h3>
+
+                    <p>
+                        Confirm and securely submit your vote.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- NOTICE -->
+
+    <section class="notice">
+
+        <span class="notice-icon">
+            🔐
+        </span>
+
+        <div>
+
+            <strong>
+                Important Voting Information
+            </strong>
+
+            <p>
+                You can only submit your vote once for this
+                election. Please review your selections carefully
+                before confirming your vote.
+            </p>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer>
+
+    <p>
+        © 2026 UniVote — University E-Voting System
+    </p>
+
+    <a href="#">
+        Help & Support
+    </a>
+
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="student-dashboard.js"></script>
+
+</body>
+</html>

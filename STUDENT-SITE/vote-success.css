@@ -1,0 +1,459 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Inter", sans-serif;
+
+    background: #f5f7fb;
+
+    color: #111827;
+
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button {
+    font-family: inherit;
+}
+
+
+/* =========================
+   NAVBAR
+========================= */
+
+.success-nav {
+    height: 70px;
+
+    padding: 0 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background: white;
+
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    color: #1746a2;
+
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.brand-icon {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: #1746a2;
+
+    color: white;
+
+    font-weight: 800;
+}
+
+.secure-label {
+    color: #15803d;
+
+    font-size: 10px;
+    font-weight: 700;
+}
+
+
+/* =========================
+   MAIN
+========================= */
+
+.success-container {
+    width: 100%;
+
+    flex: 1;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 50px 20px;
+}
+
+
+/* =========================
+   CARD
+========================= */
+
+.success-card {
+    width: 100%;
+    max-width: 650px;
+
+    padding: 45px 40px;
+
+    background: white;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 16px;
+
+    text-align: center;
+
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.05);
+}
+
+
+/* =========================
+   SUCCESS ICON
+========================= */
+
+.success-icon {
+    width: 70px;
+    height: 70px;
+
+    margin: 0 auto 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #dcfce7;
+
+    color: #16a34a;
+
+    font-size: 32px;
+    font-weight: 800;
+
+    box-shadow:
+        0 0 0 10px #f0fdf4;
+}
+
+
+.success-label {
+    display: inline-block;
+
+    margin-bottom: 10px;
+
+    color: #15803d;
+
+    font-size: 9px;
+    font-weight: 800;
+
+    letter-spacing: 1px;
+}
+
+
+.success-card h1 {
+    margin-bottom: 10px;
+
+    font-size: 28px;
+
+    letter-spacing: -0.7px;
+}
+
+
+.success-message {
+    max-width: 500px;
+
+    margin: 0 auto 28px;
+
+    color: #6b7280;
+
+    font-size: 12px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================
+   REFERENCE
+========================= */
+
+.reference-box {
+    padding: 20px;
+
+    margin-bottom: 20px;
+
+    background: #f8fafc;
+
+    border: 1px dashed #cbd5e1;
+
+    border-radius: 10px;
+}
+
+.reference-box span {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #9ca3af;
+
+    font-size: 9px;
+    font-weight: 800;
+
+    letter-spacing: 1px;
+}
+
+.reference-box strong {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #1746a2;
+
+    font-size: 20px;
+
+    letter-spacing: 1px;
+}
+
+.reference-box p {
+    color: #9ca3af;
+
+    font-size: 9px;
+}
+
+
+/* =========================
+   DETAILS
+========================= */
+
+.vote-details {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    margin-bottom: 20px;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+}
+
+.detail {
+    padding: 16px 10px;
+
+    border-right: 1px solid #e5e7eb;
+}
+
+.detail:last-child {
+    border-right: none;
+}
+
+.detail span {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #9ca3af;
+
+    font-size: 9px;
+}
+
+.detail strong {
+    font-size: 10px;
+}
+
+.submitted {
+    color: #15803d;
+}
+
+
+/* =========================
+   NOTICE
+========================= */
+
+.success-notice {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 12px;
+
+    padding: 17px;
+
+    margin-bottom: 25px;
+
+    text-align: left;
+
+    background: #eff6ff;
+
+    border: 1px solid #bfdbfe;
+
+    border-radius: 10px;
+}
+
+.success-notice > span {
+    font-size: 18px;
+}
+
+.success-notice strong {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #1746a2;
+
+    font-size: 11px;
+}
+
+.success-notice p {
+    color: #6b7280;
+
+    font-size: 9px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================
+   ACTIONS
+========================= */
+
+.success-actions {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 10px;
+}
+
+.dashboard-btn,
+.print-btn {
+    min-height: 43px;
+
+    padding: 12px 18px;
+
+    border-radius: 8px;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.dashboard-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #1746a2;
+
+    color: white;
+}
+
+.dashboard-btn:hover {
+    background: #123b8b;
+}
+
+.print-btn {
+    border: 1px solid #d1d5db;
+
+    background: white;
+
+    color: #374151;
+}
+
+.print-btn:hover {
+    border-color: #1746a2;
+
+    color: #1746a2;
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+footer {
+    padding: 22px;
+
+    background: white;
+
+    border-top: 1px solid #e5e7eb;
+
+    text-align: center;
+}
+
+footer p {
+    color: #6b7280;
+
+    font-size: 9px;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+    .success-nav {
+        padding: 0 18px;
+    }
+
+    .secure-label {
+        font-size: 9px;
+    }
+
+    .success-container {
+        padding: 30px 15px;
+    }
+
+    .success-card {
+        padding: 35px 20px;
+    }
+
+    .success-card h1 {
+        font-size: 24px;
+    }
+
+    .vote-details {
+        grid-template-columns: 1fr;
+    }
+
+    .detail {
+        border-right: none;
+
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .detail:last-child {
+        border-bottom: none;
+    }
+
+    .success-actions {
+        flex-direction: column;
+    }
+
+    .dashboard-btn,
+    .print-btn {
+        width: 100%;
+    }
+}
