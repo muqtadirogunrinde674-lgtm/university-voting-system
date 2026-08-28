@@ -225,8 +225,8 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
 
             const response =
-                await fetch(
-                    "/api/students/register",
+               await fetch(
+    "https://university-voting-system-p4sn.onrender.com/api/students/register",
                     {
                         method: "POST",
 

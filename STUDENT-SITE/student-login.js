@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const loginBtn = document.getElementById("loginBtn");
     const message = document.getElementById("message");
 
-    const API_URL = "/api/students/login";
+    const API_URL = "https://university-voting-system-p4sn.onrender.com/api/students/login";
 
 
     /* =========================================================

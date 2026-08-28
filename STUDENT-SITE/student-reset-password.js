@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const response =
                 await fetch(
-                    "/api/students/reset-password",
+    "https://university-voting-system-p4sn.onrender.com/api/students/reset-password",
                     {
                         method: "POST",
 
