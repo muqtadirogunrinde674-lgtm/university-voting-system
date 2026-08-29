@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    const API_BASE = "/api/admin";
+    const API_BASE = "https://university-voting-system-p4sn.onrender.com/api/admin";
 
     const form = document.getElementById("settingsForm");
 

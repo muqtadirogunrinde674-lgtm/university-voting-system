@@ -190,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const response =
                     await fetch(
-                        "/api/admin/login",
+                        "https://university-voting-system-p4sn.onrender.com/api/admin/login",
                         {
                             method: "POST",
 

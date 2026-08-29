@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    const API_URL = "/api/students";
+   const API_URL = "https://university-voting-system-p4sn.onrender.com/api/students";
 
     const modal = document.getElementById("studentModal");
     const form = document.getElementById("studentForm");
