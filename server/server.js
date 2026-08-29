@@ -4,12 +4,12 @@ const path = require("path");
 require("dotenv").config();
 
 const db = require("./database");
-
+const resetAdminPassword = require("./reset-admin-password");
 const studentRoutes = require("./studentRoutes");
 const adminRoutes = require("./adminRoutes");
 
 const app = express();
-
+resetAdminPassword();
 const PORT = process.env.PORT || 5000;
 
 /* =========================================================
