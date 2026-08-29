@@ -3,7 +3,9 @@ const express = require("express");
 const {
     loginAdmin,
     getAdminSettings,
-    updateAdminSettings
+    updateAdminSettings,
+    forgotAdminPassword,
+    resetAdminPassword
 } = require("./adminController");
 
 
@@ -40,6 +42,28 @@ router.get(
 router.put(
     "/settings",
     updateAdminSettings
+);
+
+
+/* =======================================================
+   FORGOT ADMIN PASSWORD
+   POST /api/admin/forgot-password
+======================================================= */
+
+router.post(
+    "/forgot-password",
+    forgotAdminPassword
+);
+
+
+/* =======================================================
+   RESET ADMIN PASSWORD
+   POST /api/admin/reset-password
+======================================================= */
+
+router.post(
+    "/reset-password",
+    resetAdminPassword
 );
 
 

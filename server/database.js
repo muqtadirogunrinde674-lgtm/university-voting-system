@@ -7,14 +7,12 @@ const db = new Database(dbPath);
 
 db.pragma("foreign_keys = ON");
 
-console.log("✅ UniVote SQLite database connected");
-console.log("📁 Database:", dbPath);
+console.log("UniVote SQLite database connected");
+console.log("Database:", dbPath);
 
 
 /* =========================================================
    CREATE DATABASE TABLES
-   This runs before migrations so a fresh deployment
-   can start with an empty SQLite database.
 ========================================================= */
 
 db.exec(`
@@ -83,14 +81,26 @@ db.exec(`
             REFERENCES candidates(id)
             ON DELETE CASCADE
     );
+
+    CREATE TABLE IF NOT EXISTS admin_settings (
+        id INTEGER PRIMARY KEY CHECK (id = 1),
+        username TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL,
+        display_name TEXT NOT NULL,
+        admin_email TEXT,
+        reset_code_hash TEXT,
+        reset_expires_at TEXT,
+        reset_attempts INTEGER NOT NULL DEFAULT 0,
+        reset_requested_at TEXT,
+        updated_at TEXT
+    );
 `);
 
-console.log("✅ UniVote database tables created successfully");
+console.log("UniVote database tables created successfully");
 
 
 /* =========================================================
    DATABASE MIGRATION
-   Adds missing columns to existing databases.
 ========================================================= */
 
 function addColumnIfMissing(table, column, definition) {
@@ -111,16 +121,14 @@ function addColumnIfMissing(table, column, definition) {
         `);
 
         console.log(
-            `✅ Added ${column} column to ${table}`
+            `Added ${column} column to ${table}`
         );
-
     }
-
 }
 
 
 /* =========================================================
-   STUDENT ACCOUNT MIGRATIONS
+   STUDENT MIGRATIONS
 ========================================================= */
 
 addColumnIfMissing(
@@ -145,6 +153,47 @@ addColumnIfMissing(
     "students",
     "is_eligible",
     "INTEGER NOT NULL DEFAULT 0"
+);
+
+
+/* =========================================================
+   ADMIN RESET MIGRATIONS
+========================================================= */
+
+addColumnIfMissing(
+    "admin_settings",
+    "admin_email",
+    "TEXT"
+);
+
+addColumnIfMissing(
+    "admin_settings",
+    "reset_code_hash",
+    "TEXT"
+);
+
+addColumnIfMissing(
+    "admin_settings",
+    "reset_expires_at",
+    "TEXT"
+);
+
+addColumnIfMissing(
+    "admin_settings",
+    "reset_attempts",
+    "INTEGER NOT NULL DEFAULT 0"
+);
+
+addColumnIfMissing(
+    "admin_settings",
+    "reset_requested_at",
+    "TEXT"
+);
+
+addColumnIfMissing(
+    "admin_settings",
+    "updated_at",
+    "TEXT"
 );
 
 
