@@ -96,6 +96,7 @@ function ensureElectionTable() {
             )
         `).run();
 
+
         return;
     }
 
@@ -109,9 +110,9 @@ function ensureElectionTable() {
         columns.map(column => column.name);
 
 
-    /* -----------------------------------------------
-       Add election_id if old database does not have it
-    ------------------------------------------------ */
+    /* =========================
+       ADD ELECTION ID
+    ========================= */
 
     if (!columnNames.includes("election_id")) {
 
@@ -146,7 +147,6 @@ function ensureElectionTable() {
                         election.id +
                         "-" +
                         crypto.randomBytes(3).toString("hex"),
-
                         election.id
                     );
 
@@ -163,12 +163,13 @@ function ensureElectionTable() {
             idx_elections_election_id
             ON elections(election_id)
         `).run();
+
     }
 
 
-    /* -----------------------------------------------
-       Add start_time
-    ------------------------------------------------ */
+    /* =========================
+       ADD START TIME
+    ========================= */
 
     if (!columnNames.includes("start_time")) {
 
@@ -183,12 +184,13 @@ function ensureElectionTable() {
             SET start_time = '00:00'
             WHERE start_time IS NULL
         `).run();
+
     }
 
 
-    /* -----------------------------------------------
-       Add end_time
-    ------------------------------------------------ */
+    /* =========================
+       ADD END TIME
+    ========================= */
 
     if (!columnNames.includes("end_time")) {
 
@@ -203,7 +205,9 @@ function ensureElectionTable() {
             SET end_time = '23:59'
             WHERE end_time IS NULL
         `).run();
+
     }
+
 }
 
 
@@ -231,6 +235,7 @@ function loginAdmin(req, res) {
                 message:
                     "Username and password are required."
             });
+
         }
 
 
@@ -259,6 +264,7 @@ function loginAdmin(req, res) {
                 message:
                     "Invalid username or password."
             });
+
         }
 
 
@@ -274,29 +280,20 @@ function loginAdmin(req, res) {
                 message:
                     "Invalid username or password."
             });
+
         }
 
 
         return res.json({
-
             success: true,
-
             message:
                 "Admin login successful.",
-
             admin: {
-
-                id:
-                    admin.id,
-
-                username:
-                    admin.username,
-
+                id: admin.id,
+                username: admin.username,
                 displayName:
                     admin.display_name
-
             }
-
         });
 
 
@@ -313,7 +310,9 @@ function loginAdmin(req, res) {
             message:
                 "Unable to login as administrator."
         });
+
     }
+
 }
 
 
@@ -340,25 +339,15 @@ function getAdminSettings(req, res) {
 
 
         return res.json({
-
             success: true,
-
             admin: {
-
-                id:
-                    admin.id,
-
-                username:
-                    admin.username,
-
+                id: admin.id,
+                username: admin.username,
                 displayName:
                     admin.display_name,
-
                 updatedAt:
                     admin.updated_at
-
             }
-
         });
 
 
@@ -375,7 +364,9 @@ function getAdminSettings(req, res) {
             message:
                 "Unable to load admin settings."
         });
+
     }
+
 }
 
 
@@ -409,6 +400,7 @@ function updateAdminSettings(req, res) {
                 message:
                     "Username, current password and display name are required."
             });
+
         }
 
 
@@ -426,6 +418,7 @@ function updateAdminSettings(req, res) {
                 message:
                     "Admin account not found."
             });
+
         }
 
 
@@ -441,6 +434,7 @@ function updateAdminSettings(req, res) {
                 message:
                     "Current password is incorrect."
             });
+
         }
 
 
@@ -451,8 +445,7 @@ function updateAdminSettings(req, res) {
 
 
         const cleanDisplayName =
-            String(displayName)
-                .trim();
+            String(displayName).trim();
 
 
         let passwordHash =
@@ -470,6 +463,7 @@ function updateAdminSettings(req, res) {
                     message:
                         "New password must be at least 8 characters."
                 });
+
             }
 
 
@@ -478,6 +472,7 @@ function updateAdminSettings(req, res) {
                     String(newPassword),
                     12
                 );
+
         }
 
 
@@ -498,22 +493,15 @@ function updateAdminSettings(req, res) {
 
 
         return res.json({
-
             success: true,
-
             message:
                 "Admin settings updated successfully.",
-
             admin: {
-
                 username:
                     cleanUsername,
-
                 displayName:
                     cleanDisplayName
-
             }
-
         });
 
 
@@ -530,7 +518,9 @@ function updateAdminSettings(req, res) {
             message:
                 "Unable to update admin settings."
         });
+
     }
+
 }
 
 
@@ -545,9 +535,7 @@ async function forgotAdminPassword(req, res) {
         ensureAdminTable();
 
 
-        const {
-            email
-        } = req.body;
+        const { email } = req.body;
 
 
         if (!email) {
@@ -557,6 +545,7 @@ async function forgotAdminPassword(req, res) {
                 message:
                     "Gmail address is required."
             });
+
         }
 
 
@@ -575,6 +564,7 @@ async function forgotAdminPassword(req, res) {
                 message:
                     "Please enter a valid Gmail address."
             });
+
         }
 
 
@@ -595,6 +585,7 @@ async function forgotAdminPassword(req, res) {
                 message:
                     "Admin account not found."
             });
+
         }
 
 
@@ -615,16 +606,15 @@ async function forgotAdminPassword(req, res) {
                 message:
                     "That Gmail address is not registered for the admin account."
             });
+
         }
 
 
         const code =
-            crypto
-                .randomInt(
-                    1000,
-                    10000
-                )
-                .toString();
+            crypto.randomInt(
+                1000,
+                10000
+            ).toString();
 
 
         const codeHash =
@@ -678,12 +668,9 @@ If you did not request this reset, ignore this email.`
 
 
         return res.json({
-
             success: true,
-
             message:
                 "Verification code sent to your Gmail."
-
         });
 
 
@@ -700,7 +687,9 @@ If you did not request this reset, ignore this email.`
             message:
                 "Unable to send verification code."
         });
+
     }
+
 }
 
 
@@ -733,6 +722,7 @@ async function resetAdminPassword(req, res) {
                 message:
                     "Email, verification code and new password are required."
             });
+
         }
 
 
@@ -743,8 +733,7 @@ async function resetAdminPassword(req, res) {
 
 
         const cleanCode =
-            String(code)
-                .trim();
+            String(code).trim();
 
 
         if (
@@ -756,18 +745,18 @@ async function resetAdminPassword(req, res) {
                 message:
                     "Invalid Gmail address."
             });
+
         }
 
 
-        if (
-            !/^\d{4}$/.test(cleanCode)
-        ) {
+        if (!/^\d{4}$/.test(cleanCode)) {
 
             return res.status(400).json({
                 success: false,
                 message:
                     "Verification code must contain 4 digits."
             });
+
         }
 
 
@@ -780,6 +769,7 @@ async function resetAdminPassword(req, res) {
                 message:
                     "New password must be at least 8 characters."
             });
+
         }
 
 
@@ -797,6 +787,7 @@ async function resetAdminPassword(req, res) {
                 message:
                     "Admin account not found."
             });
+
         }
 
 
@@ -810,6 +801,7 @@ async function resetAdminPassword(req, res) {
                 message:
                     "Invalid password reset request."
             });
+
         }
 
 
@@ -822,6 +814,7 @@ async function resetAdminPassword(req, res) {
                 message:
                     "Too many incorrect attempts. Please request a new code."
             });
+
         }
 
 
@@ -835,6 +828,7 @@ async function resetAdminPassword(req, res) {
                 message:
                     "No active verification code. Please request a new one."
             });
+
         }
 
 
@@ -859,6 +853,7 @@ async function resetAdminPassword(req, res) {
                 message:
                     "Verification code has expired. Please request a new one."
             });
+
         }
 
 
@@ -887,6 +882,7 @@ async function resetAdminPassword(req, res) {
                 message:
                     "Incorrect verification code."
             });
+
         }
 
 
@@ -914,12 +910,9 @@ async function resetAdminPassword(req, res) {
 
 
         return res.json({
-
             success: true,
-
             message:
                 "Admin password reset successfully."
-
         });
 
 
@@ -936,7 +929,9 @@ async function resetAdminPassword(req, res) {
             message:
                 "Unable to reset admin password."
         });
+
     }
+
 }
 
 
@@ -972,6 +967,10 @@ function createElection(req, res) {
         );
 
 
+        /* =========================
+           REQUIRED FIELDS
+        ========================= */
+
         if (
             !name ||
             !startDate ||
@@ -985,27 +984,46 @@ function createElection(req, res) {
                 message:
                     "Election name, start date, start time, end date and end time are required."
             });
+
         }
 
 
         const cleanName =
             String(name).trim();
 
-
         const cleanStartDate =
             String(startDate).trim();
-
 
         const cleanStartTime =
             String(startTime).trim();
 
-
         const cleanEndDate =
             String(endDate).trim();
 
-
         const cleanEndTime =
             String(endTime).trim();
+
+
+        /* =========================
+           VALIDATE DATE/TIME
+        ========================= */
+
+        if (
+            !/^\d{4}-\d{2}-\d{2}$/.test(
+                cleanStartDate
+            ) ||
+            !/^\d{4}-\d{2}-\d{2}$/.test(
+                cleanEndDate
+            )
+        ) {
+
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Invalid election date."
+            });
+
+        }
 
 
         if (
@@ -1020,20 +1038,21 @@ function createElection(req, res) {
             return res.status(400).json({
                 success: false,
                 message:
-                    "Invalid election time format."
+                    "Invalid election time."
             });
+
         }
 
 
         const start =
             new Date(
-                `${cleanStartDate}T${cleanStartTime}:00`
+                `${cleanStartDate}T${cleanStartTime}`
             );
 
 
         const end =
             new Date(
-                `${cleanEndDate}T${cleanEndTime}:00`
+                `${cleanEndDate}T${cleanEndTime}`
             );
 
 
@@ -1047,6 +1066,7 @@ function createElection(req, res) {
                 message:
                     "Invalid election date or time."
             });
+
         }
 
 
@@ -1057,8 +1077,13 @@ function createElection(req, res) {
                 message:
                     "The end date and time must be after the start date and time."
             });
+
         }
 
+
+        /* =========================
+           DUPLICATE CHECK
+        ========================= */
 
         const existing =
             db.prepare(`
@@ -1075,21 +1100,28 @@ function createElection(req, res) {
                 message:
                     "An election with this name already exists."
             });
+
         }
 
+
+        /* =========================
+           CREATE ID
+        ========================= */
 
         const electionId =
             "ELEC-" +
             Date.now() +
             "-" +
-            crypto
-                .randomBytes(3)
-                .toString("hex");
+            crypto.randomBytes(3).toString("hex");
 
 
         const createdAt =
             new Date().toISOString();
 
+
+        /* =========================
+           INSERT
+        ========================= */
 
         const result =
             db.prepare(`
@@ -1113,6 +1145,10 @@ function createElection(req, res) {
                 createdAt
             );
 
+
+        /* =========================
+           GET CREATED ELECTION
+        ========================= */
 
         const election =
             db.prepare(`
@@ -1169,7 +1205,9 @@ function createElection(req, res) {
                 error.message
 
         });
+
     }
+
 }
 
 
@@ -1225,7 +1263,9 @@ function getElections(req, res) {
                 "Unable to load elections."
 
         });
+
     }
+
 }
 
 
@@ -1240,32 +1280,26 @@ function deleteElection(req, res) {
         ensureElectionTable();
 
 
-        const requestedId =
+        const electionId =
             String(
                 req.params.id || ""
             ).trim();
 
 
-        if (!requestedId) {
+        if (!electionId) {
 
             return res.status(400).json({
                 success: false,
                 message:
                     "Election ID is required."
             });
+
         }
 
 
         /*
-         * Accept BOTH:
-         *
-         * /elections/5
-         *
-         * and
-         *
-         * /elections/ELEC-123...
-         *
-         * This fixes the old delete mismatch.
+         * The frontend may send either the
+         * database numeric ID or election_id.
          */
 
         const election =
@@ -1273,60 +1307,32 @@ function deleteElection(req, res) {
                 SELECT
                     id,
                     election_id AS electionId,
-                    name,
-                    start_date AS startDate,
-                    start_time AS startTime,
-                    end_date AS endDate,
-                    end_time AS endTime
+                    name
                 FROM elections
                 WHERE id = ?
                 OR election_id = ?
             `).get(
-                requestedId,
-                requestedId
+                electionId,
+                electionId
             );
 
 
         if (!election) {
 
             return res.status(404).json({
-
                 success: false,
-
                 message:
                     "Election not found."
-
             });
+
         }
 
 
-        const result =
-            db.prepare(`
-                DELETE FROM elections
-                WHERE id = ?
-            `).run(
-                election.id
-            );
-
-
-        if (
-            result.changes === 0
-        ) {
-
-            return res.status(404).json({
-
-                success: false,
-
-                message:
-                    "Election could not be deleted."
-
-            });
-        }
-
-
-        console.log(
-            "ELECTION DELETED:",
-            election
+        db.prepare(`
+            DELETE FROM elections
+            WHERE id = ?
+        `).run(
+            election.id
         );
 
 
@@ -1355,13 +1361,12 @@ function deleteElection(req, res) {
             success: false,
 
             message:
-                "Unable to delete election.",
-
-            error:
-                error.message
+                "Unable to delete election."
 
         });
+
     }
+
 }
 
 

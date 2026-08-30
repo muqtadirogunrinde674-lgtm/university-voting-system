@@ -3,17 +3,42 @@ document.addEventListener("DOMContentLoaded", () => {
     const API_BASE_URL =
         "https://university-voting-system-p4sn.onrender.com";
 
-    const form = document.getElementById("electionForm");
-    const electionName = document.getElementById("electionName");
-    const startDate = document.getElementById("startDate");
-    const endDate = document.getElementById("endDate");
-    const electionList = document.getElementById("electionList");
-    const emptyState = document.getElementById("emptyState");
-    const electionCount = document.getElementById("electionCount");
-    const backBtn = document.getElementById("backBtn");
+    const form =
+        document.getElementById("electionForm");
+
+    const electionName =
+        document.getElementById("electionName");
+
+    const startDate =
+        document.getElementById("startDate");
+
+    const startTime =
+        document.getElementById("startTime");
+
+    const endDate =
+        document.getElementById("endDate");
+
+    const endTime =
+        document.getElementById("endTime");
+
+    const electionList =
+        document.getElementById("electionList");
+
+    const emptyState =
+        document.getElementById("emptyState");
+
+    const electionCount =
+        document.getElementById("electionCount");
+
+    const backBtn =
+        document.getElementById("backBtn");
 
     let elections = [];
 
+
+    /* =========================
+       LOAD ELECTIONS
+    ========================= */
 
     async function loadElections() {
 
@@ -27,7 +52,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (!response.ok || !data.success) {
                 throw new Error(
-                    data.message || "Unable to load elections."
+                    data.message ||
+                    "Unable to load elections."
                 );
             }
 
@@ -39,12 +65,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
         } catch (error) {
 
-            console.error("Load elections error:", error);
+            console.error(
+                "Load elections error:",
+                error
+            );
 
             Swal.fire({
                 icon: "error",
                 title: "Unable to Load Elections",
-                text: error.message ||
+                text:
+                    error.message ||
                     "Could not connect to the voting server.",
                 confirmButtonColor: "#2563eb"
             });
@@ -54,187 +84,296 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    form.addEventListener("submit", async (event) => {
+    /* =========================
+       CREATE ELECTION
+    ========================= */
 
-        event.preventDefault();
+    form.addEventListener(
+        "submit",
+        async (event) => {
 
-        const name = electionName.value.trim();
-        const start = startDate.value;
-        const end = endDate.value;
-
-
-        if (!name) {
-
-            Swal.fire({
-                icon: "warning",
-                title: "Election Name Required",
-                text: "Please enter an election name.",
-                confirmButtonColor: "#2563eb"
-            });
-
-            return;
-        }
+            event.preventDefault();
 
 
-        if (!start || !end) {
+            const name =
+                electionName.value.trim();
 
-            Swal.fire({
-                icon: "warning",
-                title: "Dates Required",
-                text: "Please select both dates.",
-                confirmButtonColor: "#2563eb"
-            });
+            const start =
+                startDate.value;
 
-            return;
-        }
+            const startClock =
+                startTime.value;
 
+            const end =
+                endDate.value;
 
-        if (new Date(end) < new Date(start)) {
-
-            Swal.fire({
-                icon: "error",
-                title: "Invalid Dates",
-                text: "The end date cannot be before the start date.",
-                confirmButtonColor: "#2563eb"
-            });
-
-            return;
-        }
+            const endClock =
+                endTime.value;
 
 
-        const duplicate = elections.some((election) => {
+            /* =========================
+               REQUIRED FIELDS
+            ========================= */
 
-            return String(election.name || "")
-                .trim()
-                .toLowerCase() === name.toLowerCase();
+            if (
+                !name ||
+                !start ||
+                !startClock ||
+                !end ||
+                !endClock
+            ) {
 
-        });
+                Swal.fire({
+                    icon: "warning",
+                    title: "Missing Information",
+                    text:
+                        "Election name, start date, start time, end date and end time are required.",
+                    confirmButtonColor: "#2563eb"
+                });
 
-
-        if (duplicate) {
-
-            Swal.fire({
-                icon: "warning",
-                title: "Election Already Exists",
-                text: "An election with this name already exists.",
-                confirmButtonColor: "#2563eb"
-            });
-
-            return;
-        }
-
-
-        const createButton =
-            form.querySelector(".create-btn");
-
-
-        if (createButton) {
-
-            createButton.disabled = true;
-            createButton.textContent = "CREATING...";
-
-        }
-
-
-        try {
-
-            const response = await fetch(
-                `${API_BASE_URL}/api/admin/elections`,
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Accept": "application/json"
-                    },
-
-                    body: JSON.stringify({
-                        name: name,
-                        startDate: start,
-                        endDate: end
-                    })
-                }
-            );
-
-
-            const responseText =
-                await response.text();
-
-
-            let data;
-
-            try {
-
-                data = JSON.parse(responseText);
-
-            } catch {
-
-                console.error(
-                    "Invalid server response:",
-                    responseText
-                );
-
-                throw new Error(
-                    `Server returned an invalid response (${response.status}).`
-                );
-
+                return;
             }
 
 
-            if (!response.ok || !data.success) {
+            /* =========================
+               BUILD FULL DATETIME
+            ========================= */
 
-                throw new Error(
-                    data.message ||
-                    `Election creation failed (${response.status}).`
+            const startDateTime =
+                new Date(
+                    `${start}T${startClock}`
                 );
 
+            const endDateTime =
+                new Date(
+                    `${end}T${endClock}`
+                );
+
+
+            if (
+                isNaN(startDateTime.getTime()) ||
+                isNaN(endDateTime.getTime())
+            ) {
+
+                Swal.fire({
+                    icon: "error",
+                    title: "Invalid Date or Time",
+                    text:
+                        "Please enter valid start and end dates and times.",
+                    confirmButtonColor: "#2563eb"
+                });
+
+                return;
             }
 
 
-            form.reset();
+            /* =========================
+               CHECK END
+            ========================= */
 
-            await loadElections();
+            if (endDateTime <= startDateTime) {
 
+                Swal.fire({
+                    icon: "error",
+                    title: "Invalid Election Time",
+                    text:
+                        "The end date and time must be after the start date and time.",
+                    confirmButtonColor: "#2563eb"
+                });
 
-            Swal.fire({
-                icon: "success",
-                title: "Election Created Successfully!",
-                text: `${name} has been added to the system.`,
-                confirmButtonColor: "#2563eb"
-            });
-
-
-        } catch (error) {
-
-            console.error(
-                "Create election error:",
-                error
-            );
+                return;
+            }
 
 
-            Swal.fire({
-                icon: "error",
-                title: "Election Creation Failed",
-                text: error.message ||
-                    "Unable to create election.",
-                confirmButtonColor: "#2563eb"
-            });
+            /* =========================
+               DUPLICATE CHECK
+            ========================= */
+
+            const duplicate =
+                elections.some((election) => {
+
+                    return String(
+                        election.name || ""
+                    )
+                        .trim()
+                        .toLowerCase() ===
+                        name.toLowerCase();
+
+                });
 
 
-        } finally {
+            if (duplicate) {
+
+                Swal.fire({
+                    icon: "warning",
+                    title: "Election Already Exists",
+                    text:
+                        "An election with this name already exists.",
+                    confirmButtonColor: "#2563eb"
+                });
+
+                return;
+            }
+
+
+            const createButton =
+                form.querySelector(".create-btn");
+
 
             if (createButton) {
 
-                createButton.disabled = false;
+                createButton.disabled = true;
+
                 createButton.textContent =
-                    "CREATE ELECTION";
+                    "CREATING...";
+
+            }
+
+
+            try {
+
+                console.log(
+                    "CREATE ELECTION:",
+                    {
+                        name,
+                        startDate: start,
+                        startTime: startClock,
+                        endDate: end,
+                        endTime: endClock
+                    }
+                );
+
+
+                const response =
+                    await fetch(
+                        `${API_BASE_URL}/api/admin/elections`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json",
+
+                                "Accept":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+
+                                name: name,
+
+                                startDate: start,
+
+                                startTime:
+                                    startClock,
+
+                                endDate: end,
+
+                                endTime:
+                                    endClock
+
+                            })
+                        }
+                    );
+
+
+                const responseText =
+                    await response.text();
+
+
+                let data;
+
+
+                try {
+
+                    data =
+                        JSON.parse(
+                            responseText
+                        );
+
+                } catch {
+
+                    console.error(
+                        "Invalid server response:",
+                        responseText
+                    );
+
+                    throw new Error(
+                        `Server returned an invalid response (${response.status}).`
+                    );
+
+                }
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        `Election creation failed (${response.status}).`
+                    );
+
+                }
+
+
+                form.reset();
+
+
+                await loadElections();
+
+
+                Swal.fire({
+                    icon: "success",
+                    title:
+                        "Election Created Successfully!",
+                    text:
+                        `${name} has been added to the system.`,
+                    confirmButtonColor: "#2563eb"
+                });
+
+
+            } catch (error) {
+
+                console.error(
+                    "Create election error:",
+                    error
+                );
+
+
+                Swal.fire({
+                    icon: "error",
+                    title:
+                        "Election Creation Failed",
+                    text:
+                        error.message ||
+                        "Unable to create election.",
+                    confirmButtonColor: "#2563eb"
+                });
+
+
+            } finally {
+
+                if (createButton) {
+
+                    createButton.disabled =
+                        false;
+
+                    createButton.textContent =
+                        "CREATE ELECTION";
+
+                }
 
             }
 
         }
+    );
 
-    });
 
+    /* =========================
+       RENDER ELECTIONS
+    ========================= */
 
     function renderElections() {
 
@@ -246,13 +385,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (elections.length === 0) {
 
-            emptyState.style.display = "block";
+            emptyState.style.display =
+                "block";
 
             return;
         }
 
 
-        emptyState.style.display = "none";
+        emptyState.style.display =
+            "none";
 
 
         elections
@@ -261,7 +402,9 @@ document.addEventListener("DOMContentLoaded", () => {
             .forEach((election) => {
 
                 const card =
-                    document.createElement("div");
+                    document.createElement(
+                        "div"
+                    );
 
                 card.className =
                     "election-card";
@@ -269,12 +412,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const status =
                     getElectionStatus(
-                        election.startDate ||
-                        election.start_date,
-
-                        election.endDate ||
-                        election.end_date
+                        election
                     );
+
+
+                const startDateValue =
+                    election.startDate ||
+                    election.start_date;
+
+                const startTimeValue =
+                    election.startTime ||
+                    election.start_time ||
+                    "";
+
+                const endDateValue =
+                    election.endDate ||
+                    election.end_date;
+
+                const endTimeValue =
+                    election.endTime ||
+                    election.end_time ||
+                    "";
 
 
                 card.innerHTML = `
@@ -282,20 +440,28 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="election-info">
 
                         <h3>
-                            ${escapeHTML(election.name)}
+                            ${escapeHTML(
+                                election.name
+                            )}
                         </h3>
 
                         <p>
                             ${formatDate(
-                                election.startDate ||
-                                election.start_date
+                                startDateValue
+                            )}
+
+                            ${formatTime(
+                                startTimeValue
                             )}
 
                             —
 
                             ${formatDate(
-                                election.endDate ||
-                                election.end_date
+                                endDateValue
+                            )}
+
+                            ${formatTime(
+                                endTimeValue
                             )}
                         </p>
 
@@ -310,10 +476,14 @@ document.addEventListener("DOMContentLoaded", () => {
                             ${status.text}
                         </span>
 
+
                         <button
                             type="button"
                             class="delete-btn"
-                            data-id="${escapeHTML(election.id)}"
+                            data-id="${escapeHTML(
+                                election.id ||
+                                election.electionId
+                            )}"
                         >
                             🗑️ Delete
                         </button>
@@ -323,19 +493,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 `;
 
 
-                electionList.appendChild(card);
+                electionList.appendChild(
+                    card
+                );
 
             });
 
     }
 
 
+    /* =========================
+       DELETE ELECTION
+    ========================= */
+
     electionList.addEventListener(
         "click",
         async (event) => {
 
             const deleteButton =
-                event.target.closest(".delete-btn");
+                event.target.closest(
+                    ".delete-btn"
+                );
 
 
             if (!deleteButton) {
@@ -348,12 +526,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             const election =
-                elections.find((item) => {
+                elections.find(
+                    (item) => {
 
-                    return String(item.id) ===
-                        String(electionId);
+                        return String(
+                            item.id ||
+                            item.electionId
+                        ) ===
+                        String(
+                            electionId
+                        );
 
-                });
+                    }
+                );
 
 
             if (!election) {
@@ -361,8 +546,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 Swal.fire({
                     icon: "error",
                     title: "Election Not Found",
-                    text: "This election could not be found.",
-                    confirmButtonColor: "#2563eb"
+                    text:
+                        "This election could not be found.",
+                    confirmButtonColor:
+                        "#2563eb"
                 });
 
                 return;
@@ -374,7 +561,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     icon: "warning",
 
-                    title: "Delete Election?",
+                    title:
+                        "Delete Election?",
 
                     html: `
                         <p style="font-size:13px;margin-bottom:8px;">
@@ -382,7 +570,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         </p>
 
                         <strong style="font-size:16px;">
-                            ${escapeHTML(election.name)}
+                            ${escapeHTML(
+                                election.name
+                            )}
                         </strong>
 
                         <p style="font-size:11px;color:#777;margin-top:12px;">
@@ -390,17 +580,23 @@ document.addEventListener("DOMContentLoaded", () => {
                         </p>
                     `,
 
-                    showCancelButton: true,
+                    showCancelButton:
+                        true,
 
-                    confirmButtonText: "Yes, Delete",
+                    confirmButtonText:
+                        "Yes, Delete",
 
-                    cancelButtonText: "Cancel",
+                    cancelButtonText:
+                        "Cancel",
 
-                    confirmButtonColor: "#dc2626",
+                    confirmButtonColor:
+                        "#dc2626",
 
-                    cancelButtonColor: "#6b7280",
+                    cancelButtonColor:
+                        "#6b7280",
 
-                    reverseButtons: true
+                    reverseButtons:
+                        true
 
                 });
 
@@ -419,8 +615,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         )}`,
                         {
                             method: "DELETE",
+
                             headers: {
-                                "Accept": "application/json"
+                                "Accept":
+                                    "application/json"
                             }
                         }
                     );
@@ -432,10 +630,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 let data;
 
+
                 try {
 
                     data =
-                        JSON.parse(responseText);
+                        JSON.parse(
+                            responseText
+                        );
 
                 } catch {
 
@@ -446,7 +647,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
 
-                if (!response.ok || !data.success) {
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
 
                     throw new Error(
                         data.message ||
@@ -461,10 +665,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 Swal.fire({
                     icon: "success",
-                    title: "Election Deleted",
-                    text: "The election has been deleted successfully.",
+                    title:
+                        "Election Deleted",
+                    text:
+                        "The election has been deleted successfully.",
                     timer: 1500,
-                    showConfirmButton: false
+                    showConfirmButton:
+                        false
                 });
 
 
@@ -478,10 +685,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 Swal.fire({
                     icon: "error",
-                    title: "Delete Failed",
-                    text: error.message ||
+                    title:
+                        "Delete Failed",
+                    text:
+                        error.message ||
                         "Unable to delete election.",
-                    confirmButtonColor: "#2563eb"
+                    confirmButtonColor:
+                        "#2563eb"
                 });
 
             }
@@ -490,59 +700,68 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    function getElectionStatus(start, end) {
+    /* =========================
+       ELECTION STATUS
+    ========================= */
 
-        const today = new Date();
-
-        today.setHours(
-            0,
-            0,
-            0,
-            0
-        );
-
+    function getElectionStatus(
+        election
+    ) {
 
         const startDateValue =
-            new Date(start);
+            election.startDate ||
+            election.start_date;
+
+        const startTimeValue =
+            election.startTime ||
+            election.start_time ||
+            "00:00";
 
         const endDateValue =
-            new Date(end);
+            election.endDate ||
+            election.end_date;
+
+        const endTimeValue =
+            election.endTime ||
+            election.end_time ||
+            "23:59";
 
 
-        startDateValue.setHours(
-            0,
-            0,
-            0,
-            0
-        );
+        const start =
+            new Date(
+                `${startDateValue}T${startTimeValue}`
+            );
+
+        const end =
+            new Date(
+                `${endDateValue}T${endTimeValue}`
+            );
 
 
-        endDateValue.setHours(
-            23,
-            59,
-            59,
-            999
-        );
+        const now =
+            new Date();
 
 
-        if (today < startDateValue) {
+        if (now < start) {
 
             return {
                 text: "UPCOMING",
-                className: "status-upcoming"
+                className:
+                    "status-upcoming"
             };
 
         }
 
 
         if (
-            today >= startDateValue &&
-            today <= endDateValue
+            now >= start &&
+            now <= end
         ) {
 
             return {
                 text: "ACTIVE",
-                className: "status-active"
+                className:
+                    "status-active"
             };
 
         }
@@ -550,13 +769,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
         return {
             text: "ENDED",
-            className: "status-ended"
+            className:
+                "status-ended"
         };
 
     }
 
 
-    function formatDate(date) {
+    /* =========================
+       FORMAT DATE
+    ========================= */
+
+    function formatDate(
+        date
+    ) {
 
         if (!date) {
             return "";
@@ -577,17 +803,91 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    function escapeHTML(value) {
+    /* =========================
+       FORMAT TIME
+    ========================= */
 
-        return String(value ?? "")
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
+    function formatTime(
+        time
+    ) {
+
+        if (!time) {
+            return "";
+        }
+
+
+        const parts =
+            String(time).split(":");
+
+
+        if (parts.length < 2) {
+            return time;
+        }
+
+
+        let hour =
+            parseInt(
+                parts[0],
+                10
+            );
+
+        const minute =
+            parts[1];
+
+
+        const suffix =
+            hour >= 12
+                ? "PM"
+                : "AM";
+
+
+        hour =
+            hour % 12 || 12;
+
+
+        return `${hour}:${minute} ${suffix}`;
 
     }
 
+
+    /* =========================
+       ESCAPE HTML
+    ========================= */
+
+    function escapeHTML(
+        value
+    ) {
+
+        return String(
+            value ?? ""
+        )
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+
+    /* =========================
+       BACK BUTTON
+    ========================= */
 
     if (backBtn) {
 
@@ -603,6 +903,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+
+    /* =========================
+       START
+    ========================= */
 
     loadElections();
 
