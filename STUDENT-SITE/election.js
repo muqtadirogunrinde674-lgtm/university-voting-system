@@ -1,637 +1,286 @@
-document.addEventListener("DOMContentLoaded", async function () {
+document.addEventListener("DOMContentLoaded", async () => {
 
-    /* =====================================================
-       LOGIN CHECK
-    ===================================================== */
-
-    if (
-        sessionStorage.getItem("studentLoggedIn") !== "true"
-    ) {
+    if (sessionStorage.getItem("studentLoggedIn") !== "true") {
         window.location.href = "student-login.html";
         return;
     }
 
+    const loading = document.getElementById("loading");
+    const electionList = document.getElementById("electionList");
+    const emptyState = document.getElementById("emptyState");
+    const bottomAction = document.getElementById("bottomAction");
+    const completedCount = document.getElementById("completedCount");
+    const finishBtn = document.getElementById("finishBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
 
-    /* =====================================================
-       ELEMENTS
-    ===================================================== */
+    const API_BASE_URL = "https://university-voting-system-p4sn.onrender.com";
 
-    const loading =
-        document.getElementById("loading");
-
-    const electionList =
-        document.getElementById("electionList");
-
-    const emptyState =
-        document.getElementById("emptyState");
-
-    const bottomAction =
-        document.getElementById("bottomAction");
-
-    const completedCount =
-        document.getElementById("completedCount");
-
-    const finishBtn =
-        document.getElementById("finishBtn");
-
-    const logoutBtn =
-        document.getElementById("logoutBtn");
-
-
-    /* =====================================================
-       API
-    ===================================================== */
-
-    const API_URL =
-        "/api/students/elections";
-
-
-    /* =====================================================
-       LOAD COMPLETED ELECTIONS
-    ===================================================== */
-
+    let elections = [];
     let selections = {};
 
     try {
-
         selections =
             JSON.parse(
-                localStorage.getItem(
-                    "univoteSelections"
-                )
+                localStorage.getItem("univoteSelections")
             ) || {};
+    } catch {
+        selections = {};
+    }
+
+    try {
+
+        const response = await fetch(
+            `${API_BASE_URL}/api/students/elections`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.message || "Unable to load elections."
+            );
+        }
+
+        elections = Array.isArray(data.elections)
+            ? data.elections
+            : [];
 
     } catch (error) {
 
-        console.error(
-            "Could not load selections:",
-            error
-        );
+        console.error("Election loading error:", error);
 
-        selections = {};
+        loading.style.display = "none";
 
+        await Swal.fire({
+            icon: "error",
+            title: "Unable to Load Elections",
+            text: "We could not connect to the voting server. Please try again.",
+            confirmButtonColor: "#2563eb"
+        });
+
+        return;
     }
 
+    loading.style.display = "none";
 
-    /* =====================================================
-       LOAD ELECTIONS FROM SERVER
-    ===================================================== */
+    const now = new Date();
 
-    async function loadElections() {
+    const activeElections = elections.filter(election => {
 
-        try {
+        const startValue =
+            election.startDate ||
+            election.start_date;
 
-            const response =
-                await fetch(API_URL, {
-                    method: "GET",
-                    headers: {
-                        "Accept": "application/json"
-                    }
-                });
+        const endValue =
+            election.endDate ||
+            election.end_date;
 
+        if (!startValue || !endValue) {
+            return false;
+        }
 
-            const data =
-                await response.json();
+        const start = new Date(startValue);
+        const end = new Date(endValue);
 
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+            return false;
+        }
 
-            if (!response.ok || !data.success) {
+        start.setHours(0, 0, 0, 0);
+        end.setHours(23, 59, 59, 999);
 
-                throw new Error(
-                    data.message ||
-                    "Unable to load elections."
-                );
+        return now >= start && now <= end;
+    });
 
-            }
+    if (activeElections.length === 0) {
 
+        emptyState.style.display = "block";
+        bottomAction.style.display = "none";
 
-            const elections =
-                Array.isArray(data.elections)
-                    ? data.elections
-                    : [];
+        return;
+    }
 
+    bottomAction.style.display = "flex";
 
-            loading.style.display =
-                "none";
+    activeElections.forEach(election => {
 
+        const card = document.createElement("div");
 
-            renderActiveElections(
-                elections
+        const isCompleted =
+            Boolean(
+                selections[String(election.id)]
             );
 
+        card.className = "election-card";
 
-        } catch (error) {
+        if (isCompleted) {
+            card.classList.add("completed");
+        }
 
-            console.error(
-                "Election loading error:",
-                error
-            );
+        card.innerHTML = `
+            <div class="election-left">
 
+                <div class="election-icon">
+                    🗳️
+                </div>
 
-            loading.style.display =
-                "none";
+                <div class="election-info">
 
-
-            emptyState.style.display =
-                "block";
-
-
-            emptyState.innerHTML = `
-
-                <div>
-
-                    <h3>
-                        Unable to Load Elections
-                    </h3>
+                    <h2>
+                        ${escapeHTML(
+                            election.name || "Election"
+                        )}
+                    </h2>
 
                     <p>
                         ${escapeHTML(
-                            error.message ||
-                            "Please try again later."
+                            election.description || "Election currently available."
                         )}
                     </p>
 
                 </div>
 
-            `;
+            </div>
 
+            <div class="election-right">
 
-            bottomAction.style.display =
-                "none";
+                <span class="status ${
+                    isCompleted
+                        ? "completed"
+                        : "available"
+                }">
 
-
-            Swal.fire({
-
-                icon: "error",
-
-                title:
-                    "Unable to Load Elections",
-
-                text:
-                    error.message ||
-                    "Please try again later.",
-
-                confirmButtonColor:
-                    "#2563eb"
-
-            });
-
-        }
-
-    }
-
-
-    /* =====================================================
-       RENDER ACTIVE ELECTIONS
-    ===================================================== */
-
-    function renderActiveElections(
-        elections
-    ) {
-
-        electionList.innerHTML = "";
-
-
-        const now =
-            new Date();
-
-
-        const activeElections =
-            elections.filter(
-                election => {
-
-                    if (
-                        !election.startDate ||
-                        !election.endDate
-                    ) {
-                        return false;
+                    ${
+                        isCompleted
+                            ? "✓ COMPLETED"
+                            : "VOTE NOW"
                     }
 
+                </span>
 
-                    const start =
-                        new Date(
-                            election.startDate
-                        );
+                <span class="arrow">
+                    →
+                </span>
 
-                    const end =
-                        new Date(
-                            election.endDate
-                        );
+            </div>
+        `;
 
+        card.addEventListener("click", () => {
 
-                    if (
-                        Number.isNaN(
-                            start.getTime()
-                        ) ||
-                        Number.isNaN(
-                            end.getTime()
-                        )
-                    ) {
-
-                        return false;
-
-                    }
-
-
-                    start.setHours(
-                        0,
-                        0,
-                        0,
-                        0
-                    );
-
-
-                    end.setHours(
-                        23,
-                        59,
-                        59,
-                        999
-                    );
-
-
-                    return (
-                        now >= start &&
-                        now <= end
-                    );
-
-                }
-            );
-
-
-        /* =================================================
-           NO ACTIVE ELECTION
-        ================================================= */
-
-        if (
-            activeElections.length === 0
-        ) {
-
-            emptyState.style.display =
-                "block";
-
-            bottomAction.style.display =
-                "none";
-
-            return;
-
-        }
-
-
-        emptyState.style.display =
-            "none";
-
-
-        bottomAction.style.display =
-            "flex";
-
-
-        /* =================================================
-           RENDER EACH ELECTION
-        ================================================= */
-
-        activeElections.forEach(
-            election => {
-
-                const card =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                card.className =
-                    "election-card";
-
-
-                const electionId =
-                    election.id;
-
-
-                const isCompleted =
-                    Boolean(
-                        selections[
-                            electionId
-                        ]
-                    );
-
-
-                card.innerHTML = `
-
-                    <div class="election-left">
-
-                        <div class="election-icon">
-                            🗳️
-                        </div>
-
-
-                        <div class="election-info">
-
-                            <h2>
-                                ${escapeHTML(
-                                    election.name ||
-                                    "Election"
-                                )}
-                            </h2>
-
-
-                            <p>
-                                Active election
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="election-right">
-
-                        <span class="status ${
-                            isCompleted
-                                ? "completed"
-                                : "available"
-                        }">
-
-                            ${
-                                isCompleted
-                                    ? "✓ COMPLETED"
-                                    : "VOTE NOW"
-                            }
-
-                        </span>
-
-
-                        <span class="arrow">
-                            →
-                        </span>
-
-                    </div>
-
-                `;
-
-
-                if (isCompleted) {
-
-                    card.classList.add(
-                        "completed"
-                    );
-
-                }
-
-
-                /* =========================================
-                   ELECTION CLICK
-                ========================================= */
-
-                card.addEventListener(
-                    "click",
-                    async function () {
-
-                        if (isCompleted) {
-
-                            Swal.fire({
-
-                                icon: "info",
-
-                                title:
-                                    "Election Completed",
-
-                                text:
-                                    "You have already completed this election.",
-
-                                confirmButtonColor:
-                                    "#2563eb"
-
-                            });
-
-                            return;
-
-                        }
-
-
-                        /* =================================
-                           SAVE ACTIVE ELECTION
-                        ================================= */
-
-                        localStorage.setItem(
-                            "activeElectionId",
-                            String(
-                                electionId
-                            )
-                        );
-
-
-                        localStorage.removeItem(
-                            "activeVotingPosition"
-                        );
-
-
-                        localStorage.removeItem(
-                            "activeCandidateId"
-                        );
-
-
-                        /* =================================
-                           GO TO VOTING PAGE
-                        ================================= */
-
-                        window.location.href =
-                            "vote.html";
-
-                    }
-                );
-
-
-                electionList.appendChild(
-                    card
-                );
-
-            }
-        );
-
-
-        updateProgress();
-
-    }
-
-
-    /* =====================================================
-       UPDATE PROGRESS
-    ===================================================== */
-
-    function updateProgress() {
-
-        const count =
-            Object.keys(
-                selections
-            ).length;
-
-
-        completedCount.textContent =
-            count;
-
-    }
-
-
-    /* =====================================================
-       FINISH ELECTION
-    ===================================================== */
-
-    finishBtn.addEventListener(
-        "click",
-        function () {
-
-            const completed =
-                Object.keys(
-                    selections
-                ).length;
-
-
-            if (
-                completed === 0
-            ) {
+            if (isCompleted) {
 
                 Swal.fire({
-
-                    icon: "warning",
-
-                    title:
-                        "No Election Completed",
-
-                    text:
-                        "Please complete at least one election before finishing.",
-
-                    confirmButtonColor:
-                        "#2563eb"
-
+                    icon: "info",
+                    title: "Election Completed",
+                    text: "You have already completed this election.",
+                    confirmButtonColor: "#2563eb"
                 });
 
                 return;
-
             }
 
-
-            window.location.href =
-                "review-vote.html";
-
-        }
-    );
-
-
-    /* =====================================================
-       LOGOUT
-    ===================================================== */
-
-    logoutBtn.addEventListener(
-        "click",
-        function () {
-
-            Swal.fire({
-
-                icon: "question",
-
-                title:
-                    "Logout?",
-
-                text:
-                    "Are you sure you want to logout?",
-
-                showCancelButton:
-                    true,
-
-                confirmButtonText:
-                    "Logout",
-
-                cancelButtonText:
-                    "Cancel",
-
-                confirmButtonColor:
-                    "#dc2626",
-
-                cancelButtonColor:
-                    "#6b7280",
-
-                reverseButtons:
-                    true
-
-            }).then(
-                function (result) {
-
-                    if (
-                        result.isConfirmed
-                    ) {
-
-                        sessionStorage.removeItem(
-                            "studentLoggedIn"
-                        );
-
-                        sessionStorage.removeItem(
-                            "studentUsername"
-                        );
-
-                        localStorage.removeItem(
-                            "univoteSelections"
-                        );
-
-                        localStorage.removeItem(
-                            "activeElectionId"
-                        );
-
-                        localStorage.removeItem(
-                            "activeVotingPosition"
-                        );
-
-                        localStorage.removeItem(
-                            "activeCandidateId"
-                        );
-
-
-                        window.location.href =
-                            "student-login.html";
-
-                    }
-
-                }
+            localStorage.setItem(
+                "activeElectionId",
+                String(election.id)
             );
 
+            localStorage.removeItem(
+                "activeVotingPosition"
+            );
+
+            localStorage.removeItem(
+                "activeCandidateId"
+            );
+
+            window.location.href = "vote.html";
+        });
+
+        electionList.appendChild(card);
+    });
+
+    updateProgress();
+
+    finishBtn.addEventListener("click", () => {
+
+        const completed =
+            Object.keys(selections).length;
+
+        if (completed === 0) {
+
+            Swal.fire({
+                icon: "warning",
+                title: "No Election Completed",
+                text: "Please complete at least one election before finishing.",
+                confirmButtonColor: "#2563eb"
+            });
+
+            return;
         }
-    );
 
+        window.location.href = "review-vote.html";
+    });
 
-    /* =====================================================
-       ESCAPE HTML
-    ===================================================== */
+    logoutBtn.addEventListener("click", () => {
+
+        Swal.fire({
+            icon: "question",
+            title: "Logout?",
+            text: "Are you sure you want to logout?",
+            showCancelButton: true,
+            confirmButtonText: "Logout",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#dc2626",
+            cancelButtonColor: "#6b7280",
+            reverseButtons: true
+        }).then(result => {
+
+            if (!result.isConfirmed) {
+                return;
+            }
+
+            sessionStorage.removeItem(
+                "studentLoggedIn"
+            );
+
+            sessionStorage.removeItem(
+                "studentUsername"
+            );
+
+            localStorage.removeItem(
+                "univoteSelections"
+            );
+
+            localStorage.removeItem(
+                "activeElectionId"
+            );
+
+            localStorage.removeItem(
+                "activeVotingPosition"
+            );
+
+            localStorage.removeItem(
+                "activeCandidateId"
+            );
+
+            window.location.href =
+                "student-login.html";
+        });
+    });
+
+    function updateProgress() {
+
+        completedCount.textContent =
+            Object.keys(selections).length;
+    }
 
     function escapeHTML(value) {
 
-        return String(
-            value ?? ""
-        )
-            .replace(
-                /&/g,
-                "&amp;"
-            )
-            .replace(
-                /</g,
-                "&lt;"
-            )
-            .replace(
-                />/g,
-                "&gt;"
-            )
-            .replace(
-                /"/g,
-                "&quot;"
-            )
-            .replace(
-                /'/g,
-                "&#039;"
-            );
-
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
-
-
-    /* =====================================================
-       START
-    ===================================================== */
-
-    await loadElections();
 
 });
