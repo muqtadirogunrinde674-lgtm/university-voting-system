@@ -9,13 +9,16 @@ const {
     addStudent,
     updateStudent,
     deleteStudent,
-    resetStudentPassword
+    resetStudentPassword,
+    getElections,
+    getElection
 } = require("./studentContoller");
 
 
 /* =========================================================
    STUDENT AUTHENTICATION
 ========================================================= */
+
 
 /*
    Student creates their account
@@ -48,8 +51,34 @@ router.post(
 
 
 /* =========================================================
+   ELECTIONS
+========================================================= */
+
+
+/*
+   Get all available elections
+   GET /api/students/elections
+*/
+router.get(
+    "/elections",
+    getElections
+);
+
+
+/*
+   Get a single election
+   GET /api/students/elections/:id
+*/
+router.get(
+    "/elections/:id",
+    getElection
+);
+
+
+/* =========================================================
    ADMIN / STUDENT MANAGEMENT
 ========================================================= */
+
 
 /*
    Get all students

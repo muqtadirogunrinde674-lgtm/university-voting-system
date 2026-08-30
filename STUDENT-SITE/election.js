@@ -1,8 +1,8 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async function () {
 
-    /* ===============================
+    /* =====================================================
        LOGIN CHECK
-    =============================== */
+    ===================================================== */
 
     if (
         sessionStorage.getItem("studentLoggedIn") !== "true"
@@ -12,9 +12,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    /* ===============================
+    /* =====================================================
        ELEMENTS
-    =============================== */
+    ===================================================== */
 
     const loading =
         document.getElementById("loading");
@@ -38,55 +38,19 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("logoutBtn");
 
 
-    /* ===============================
-       LOAD DATA
-    =============================== */
+    /* =====================================================
+       API
+    ===================================================== */
 
-    let elections = [];
-    let candidates = [];
+    const API_URL =
+        "/api/students/elections";
+
+
+    /* =====================================================
+       LOAD COMPLETED ELECTIONS
+    ===================================================== */
+
     let selections = {};
-
-    try {
-
-        elections =
-            JSON.parse(
-                localStorage.getItem(
-                    "univoteElections"
-                )
-            ) || [];
-
-    } catch (error) {
-
-        console.error(
-            "Could not load elections:",
-            error
-        );
-
-        elections = [];
-
-    }
-
-
-    try {
-
-        candidates =
-            JSON.parse(
-                localStorage.getItem(
-                    "univoteCandidates"
-                )
-            ) || [];
-
-    } catch (error) {
-
-        console.error(
-            "Could not load candidates:",
-            error
-        );
-
-        candidates = [];
-
-    }
-
 
     try {
 
@@ -109,347 +73,410 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    loading.style.display = "none";
+    /* =====================================================
+       LOAD ELECTIONS FROM SERVER
+    ===================================================== */
 
+    async function loadElections() {
 
-    /* ===============================
-       FIND ACTIVE ELECTIONS
-    =============================== */
+        try {
 
-    const now = new Date();
-
-
-    const activeElections =
-        elections.filter(
-            election => {
-
-                if (
-                    !election.startDate ||
-                    !election.endDate
-                ) {
-                    return false;
-                }
-
-
-                const start =
-                    new Date(
-                        election.startDate
-                    );
-
-                const end =
-                    new Date(
-                        election.endDate
-                    );
-
-
-                start.setHours(
-                    0,
-                    0,
-                    0,
-                    0
-                );
-
-
-                end.setHours(
-                    23,
-                    59,
-                    59,
-                    999
-                );
-
-
-                return (
-                    now >= start &&
-                    now <= end
-                );
-
-            }
-        );
-
-
-    /* ===============================
-       NO ACTIVE ELECTION
-    =============================== */
-
-    if (
-        activeElections.length === 0
-    ) {
-
-        emptyState.style.display = "block";
-
-        bottomAction.style.display = "none";
-
-        return;
-
-    }
-
-
-    /* ===============================
-       SHOW BOTTOM ACTION
-    =============================== */
-
-    bottomAction.style.display = "flex";
-
-
-    /* ===============================
-       RENDER ELECTIONS
-    =============================== */
-
-    activeElections.forEach(
-        election => {
-
-            const card =
-                document.createElement(
-                    "div"
-                );
-
-
-            /* --------------------------------
-               GET CANDIDATES FOR THIS ELECTION
-            -------------------------------- */
-
-            const electionCandidates =
-                candidates.filter(
-                    candidate => {
-
-                        const candidateElectionId =
-                            candidate.electionId ??
-                            candidate.electionID ??
-                            candidate.election_id;
-
-                        return (
-                            String(
-                                candidateElectionId
-                            ) ===
-                            String(
-                                election.id
-                            )
-                        );
-
+            const response =
+                await fetch(API_URL, {
+                    method: "GET",
+                    headers: {
+                        "Accept": "application/json"
                     }
-                );
+                });
 
 
-            /* --------------------------------
-               CHECK IF STUDENT ALREADY VOTED
-            -------------------------------- */
-
-            const isCompleted =
-                Boolean(
-                    selections[
-                        election.id
-                    ]
-                );
+            const data =
+                await response.json();
 
 
-            card.className =
-                "election-card";
+            if (!response.ok || !data.success) {
 
-
-            if (isCompleted) {
-
-                card.classList.add(
-                    "completed"
+                throw new Error(
+                    data.message ||
+                    "Unable to load elections."
                 );
 
             }
 
 
-            card.innerHTML = `
-
-                <div class="election-left">
-
-                    <div class="election-icon">
-                        🗳️
-                    </div>
+            const elections =
+                Array.isArray(data.elections)
+                    ? data.elections
+                    : [];
 
 
-                    <div class="election-info">
-
-                        <h2>
-                            ${escapeHTML(
-                                election.name ||
-                                "Election"
-                            )}
-                        </h2>
+            loading.style.display =
+                "none";
 
 
-                        <p>
-
-                            ${electionCandidates.length}
-
-                            candidate${
-                                electionCandidates.length === 1
-                                    ? ""
-                                    : "s"
-                            }
-
-                            available
-
-                        </p>
-
-                    </div>
-
-                </div>
+            renderActiveElections(
+                elections
+            );
 
 
-                <div class="election-right">
+        } catch (error) {
 
-                    <span class="status ${
-                        isCompleted
-                            ? "completed"
-                            : electionCandidates.length > 0
-                                ? "available"
-                                : "empty"
-                    }">
-
-                        ${
-                            isCompleted
-                                ? "✓ COMPLETED"
-                                : electionCandidates.length > 0
-                                    ? "VOTE NOW"
-                                    : "NO CANDIDATES"
-                        }
-
-                    </span>
+            console.error(
+                "Election loading error:",
+                error
+            );
 
 
-                    <span class="arrow">
-                        →
-                    </span>
+            loading.style.display =
+                "none";
+
+
+            emptyState.style.display =
+                "block";
+
+
+            emptyState.innerHTML = `
+
+                <div>
+
+                    <h3>
+                        Unable to Load Elections
+                    </h3>
+
+                    <p>
+                        ${escapeHTML(
+                            error.message ||
+                            "Please try again later."
+                        )}
+                    </p>
 
                 </div>
 
             `;
 
 
-            /* ===============================
-               ELECTION CLICK
-            =============================== */
+            bottomAction.style.display =
+                "none";
 
-            card.addEventListener(
-                "click",
-                () => {
 
-                    /* -------------------------
-                       NO CANDIDATES
-                    ------------------------- */
+            Swal.fire({
+
+                icon: "error",
+
+                title:
+                    "Unable to Load Elections",
+
+                text:
+                    error.message ||
+                    "Please try again later.",
+
+                confirmButtonColor:
+                    "#2563eb"
+
+            });
+
+        }
+
+    }
+
+
+    /* =====================================================
+       RENDER ACTIVE ELECTIONS
+    ===================================================== */
+
+    function renderActiveElections(
+        elections
+    ) {
+
+        electionList.innerHTML = "";
+
+
+        const now =
+            new Date();
+
+
+        const activeElections =
+            elections.filter(
+                election => {
 
                     if (
-                        electionCandidates.length === 0
+                        !election.startDate ||
+                        !election.endDate
+                    ) {
+                        return false;
+                    }
+
+
+                    const start =
+                        new Date(
+                            election.startDate
+                        );
+
+                    const end =
+                        new Date(
+                            election.endDate
+                        );
+
+
+                    if (
+                        Number.isNaN(
+                            start.getTime()
+                        ) ||
+                        Number.isNaN(
+                            end.getTime()
+                        )
                     ) {
 
-                        Swal.fire({
-
-                            icon: "info",
-
-                            title:
-                                "No Candidates Available",
-
-                            text:
-                                "There are currently no candidates available for this election.",
-
-                            confirmButtonColor:
-                                "#2563eb"
-
-                        });
-
-                        return;
+                        return false;
 
                     }
 
 
-                    /* -------------------------
-                       ALREADY COMPLETED
-                    ------------------------- */
-
-                    if (isCompleted) {
-
-                        Swal.fire({
-
-                            icon: "info",
-
-                            title:
-                                "Election Completed",
-
-                            text:
-                                "You have already completed this election.",
-
-                            confirmButtonColor:
-                                "#2563eb"
-
-                        });
-
-                        return;
-
-                    }
-
-
-                    /* -------------------------
-                       SAVE ACTIVE ELECTION
-                    ------------------------- */
-
-                    localStorage.setItem(
-                        "activeElectionId",
-                        String(
-                            election.id
-                        )
+                    start.setHours(
+                        0,
+                        0,
+                        0,
+                        0
                     );
 
 
-                    /* -------------------------
-                       CLEAR OLD POSITION
-                    ------------------------- */
-
-                    localStorage.removeItem(
-                        "activeVotingPosition"
+                    end.setHours(
+                        23,
+                        59,
+                        59,
+                        999
                     );
 
 
-                    /* -------------------------
-                       CLEAR OLD CANDIDATE
-                       SELECTION FOR CURRENT
-                       VOTING SESSION
-                    ------------------------- */
-
-                    localStorage.removeItem(
-                        "activeCandidateId"
+                    return (
+                        now >= start &&
+                        now <= end
                     );
-
-
-                    /* -------------------------
-                       GO TO VOTING PAGE
-                    ------------------------- */
-
-                    window.location.href =
-                        "vote.html";
 
                 }
             );
 
 
-            electionList.appendChild(
-                card
-            );
+        /* =================================================
+           NO ACTIVE ELECTION
+        ================================================= */
+
+        if (
+            activeElections.length === 0
+        ) {
+
+            emptyState.style.display =
+                "block";
+
+            bottomAction.style.display =
+                "none";
+
+            return;
 
         }
-    );
 
 
-    /* ===============================
+        emptyState.style.display =
+            "none";
+
+
+        bottomAction.style.display =
+            "flex";
+
+
+        /* =================================================
+           RENDER EACH ELECTION
+        ================================================= */
+
+        activeElections.forEach(
+            election => {
+
+                const card =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                card.className =
+                    "election-card";
+
+
+                const electionId =
+                    election.id;
+
+
+                const isCompleted =
+                    Boolean(
+                        selections[
+                            electionId
+                        ]
+                    );
+
+
+                card.innerHTML = `
+
+                    <div class="election-left">
+
+                        <div class="election-icon">
+                            🗳️
+                        </div>
+
+
+                        <div class="election-info">
+
+                            <h2>
+                                ${escapeHTML(
+                                    election.name ||
+                                    "Election"
+                                )}
+                            </h2>
+
+
+                            <p>
+                                Active election
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="election-right">
+
+                        <span class="status ${
+                            isCompleted
+                                ? "completed"
+                                : "available"
+                        }">
+
+                            ${
+                                isCompleted
+                                    ? "✓ COMPLETED"
+                                    : "VOTE NOW"
+                            }
+
+                        </span>
+
+
+                        <span class="arrow">
+                            →
+                        </span>
+
+                    </div>
+
+                `;
+
+
+                if (isCompleted) {
+
+                    card.classList.add(
+                        "completed"
+                    );
+
+                }
+
+
+                /* =========================================
+                   ELECTION CLICK
+                ========================================= */
+
+                card.addEventListener(
+                    "click",
+                    async function () {
+
+                        if (isCompleted) {
+
+                            Swal.fire({
+
+                                icon: "info",
+
+                                title:
+                                    "Election Completed",
+
+                                text:
+                                    "You have already completed this election.",
+
+                                confirmButtonColor:
+                                    "#2563eb"
+
+                            });
+
+                            return;
+
+                        }
+
+
+                        /* =================================
+                           SAVE ACTIVE ELECTION
+                        ================================= */
+
+                        localStorage.setItem(
+                            "activeElectionId",
+                            String(
+                                electionId
+                            )
+                        );
+
+
+                        localStorage.removeItem(
+                            "activeVotingPosition"
+                        );
+
+
+                        localStorage.removeItem(
+                            "activeCandidateId"
+                        );
+
+
+                        /* =================================
+                           GO TO VOTING PAGE
+                        ================================= */
+
+                        window.location.href =
+                            "vote.html";
+
+                    }
+                );
+
+
+                electionList.appendChild(
+                    card
+                );
+
+            }
+        );
+
+
+        updateProgress();
+
+    }
+
+
+    /* =====================================================
        UPDATE PROGRESS
-    =============================== */
+    ===================================================== */
 
-    updateProgress();
+    function updateProgress() {
+
+        const count =
+            Object.keys(
+                selections
+            ).length;
 
 
-    /* ===============================
+        completedCount.textContent =
+            count;
+
+    }
+
+
+    /* =====================================================
        FINISH ELECTION
-    =============================== */
+    ===================================================== */
 
     finishBtn.addEventListener(
         "click",
-        () => {
+        function () {
 
             const completed =
                 Object.keys(
@@ -488,31 +515,13 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    /* ===============================
-       UPDATE PROGRESS
-    =============================== */
-
-    function updateProgress() {
-
-        const count =
-            Object.keys(
-                selections
-            ).length;
-
-
-        completedCount.textContent =
-            count;
-
-    }
-
-
-    /* ===============================
+    /* =====================================================
        LOGOUT
-    =============================== */
+    ===================================================== */
 
     logoutBtn.addEventListener(
         "click",
-        () => {
+        function () {
 
             Swal.fire({
 
@@ -524,7 +533,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 text:
                     "Are you sure you want to logout?",
 
-                showCancelButton: true,
+                showCancelButton:
+                    true,
 
                 confirmButtonText:
                     "Logout",
@@ -538,10 +548,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 cancelButtonColor:
                     "#6b7280",
 
-                reverseButtons: true
+                reverseButtons:
+                    true
 
             }).then(
-                result => {
+                function (result) {
 
                     if (
                         result.isConfirmed
@@ -571,6 +582,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             "activeCandidateId"
                         );
 
+
                         window.location.href =
                             "student-login.html";
 
@@ -583,9 +595,9 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    /* ===============================
+    /* =====================================================
        ESCAPE HTML
-    =============================== */
+    ===================================================== */
 
     function escapeHTML(value) {
 
@@ -614,5 +626,12 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
     }
+
+
+    /* =====================================================
+       START
+    ===================================================== */
+
+    await loadElections();
 
 });

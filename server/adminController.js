@@ -14,7 +14,8 @@ Handles:
 - Password changes
 - Admin display name
 - Admin forgot password
-- 4-digit email verification
+- Admin password reset
+- Election management
 =========================================================
 */
 
@@ -64,16 +65,13 @@ function ensureAdminTable() {
     `).get();
 
 
-    /*
-    Create default admin only if one does not exist.
-    */
-
     if (!admin) {
 
         const passwordHash = bcrypt.hashSync(
             "admin123",
             12
         );
+
 
         db.prepare(`
             INSERT INTO admin_settings (
@@ -98,6 +96,26 @@ function ensureAdminTable() {
         );
 
     }
+
+}
+
+
+/* =======================================================
+   ENSURE ELECTION TABLE
+======================================================= */
+
+function ensureElectionTable() {
+
+    db.prepare(`
+        CREATE TABLE IF NOT EXISTS elections (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            election_id TEXT NOT NULL UNIQUE,
+            name TEXT NOT NULL,
+            start_date TEXT NOT NULL,
+            end_date TEXT NOT NULL,
+            created_at TEXT NOT NULL
+        )
+    `).run();
 
 }
 
@@ -525,7 +543,6 @@ function updateAdminSettings(req, res) {
 
 /* =======================================================
    FORGOT PASSWORD
-   Sends a random 4-digit code to admin Gmail.
 ======================================================= */
 
 async function forgotAdminPassword(req, res) {
@@ -600,14 +617,6 @@ async function forgotAdminPassword(req, res) {
         }
 
 
-        /*
-        The first time the reset system is used,
-        save the supplied Gmail address.
-
-        After that, only the saved admin Gmail
-        can request a reset.
-        */
-
         if (!admin.admin_email) {
 
             db.prepare(`
@@ -634,10 +643,6 @@ async function forgotAdminPassword(req, res) {
         }
 
 
-        /*
-        Generate a random 4-digit code.
-        */
-
         const code =
             crypto
                 .randomInt(
@@ -646,10 +651,6 @@ async function forgotAdminPassword(req, res) {
                 )
                 .toString();
 
-
-        /*
-        Hash the code before storing it.
-        */
 
         const codeHash =
             crypto
@@ -685,10 +686,6 @@ async function forgotAdminPassword(req, res) {
 
         );
 
-
-        /*
-        Send email.
-        */
 
         await transporter.sendMail({
 
@@ -876,10 +873,6 @@ async function resetAdminPassword(req, res) {
         }
 
 
-        /*
-        Maximum of 5 verification attempts.
-        */
-
         if (
             Number(admin.reset_attempts || 0) >= 5
         ) {
@@ -980,10 +973,6 @@ async function resetAdminPassword(req, res) {
         }
 
 
-        /*
-        Hash and save the new password.
-        */
-
         const passwordHash =
             bcrypt.hashSync(
                 String(newPassword),
@@ -1045,6 +1034,375 @@ async function resetAdminPassword(req, res) {
 
 
 /* =======================================================
+   CREATE ELECTION
+======================================================= */
+
+function createElection(req, res) {
+
+    try {
+
+        ensureElectionTable();
+
+
+        const {
+            name,
+            startDate,
+            endDate
+        } = req.body;
+
+
+        if (
+            !name ||
+            !startDate ||
+            !endDate
+        ) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Election name, start date and end date are required."
+
+            });
+
+        }
+
+
+        const cleanName =
+            String(name)
+                .trim();
+
+
+        const cleanStartDate =
+            String(startDate)
+                .trim();
+
+
+        const cleanEndDate =
+            String(endDate)
+                .trim();
+
+
+        if (
+            !cleanName ||
+            !cleanStartDate ||
+            !cleanEndDate
+        ) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Election details cannot be empty."
+
+            });
+
+        }
+
+
+        const start =
+            new Date(cleanStartDate);
+
+        const end =
+            new Date(cleanEndDate);
+
+
+        if (
+            Number.isNaN(start.getTime()) ||
+            Number.isNaN(end.getTime())
+        ) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Invalid election date."
+
+            });
+
+        }
+
+
+        if (end < start) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "The end date cannot be before the start date."
+
+            });
+
+        }
+
+
+        const existing =
+            db.prepare(`
+                SELECT id
+                FROM elections
+                WHERE LOWER(name) = LOWER(?)
+            `).get(cleanName);
+
+
+        if (existing) {
+
+            return res.status(409).json({
+
+                success: false,
+
+                message:
+                    "An election with this name already exists."
+
+            });
+
+        }
+
+
+        const electionId =
+            "ELEC-" +
+            Date.now();
+
+
+        const createdAt =
+            new Date().toISOString();
+
+
+        const result =
+            db.prepare(`
+                INSERT INTO elections (
+                    election_id,
+                    name,
+                    start_date,
+                    end_date,
+                    created_at
+                )
+                VALUES (
+                    ?,
+                    ?,
+                    ?,
+                    ?,
+                    ?
+                )
+            `).run(
+
+                electionId,
+
+                cleanName,
+
+                cleanStartDate,
+
+                cleanEndDate,
+
+                createdAt
+
+            );
+
+
+        const election =
+            db.prepare(`
+                SELECT
+                    id,
+                    election_id AS electionId,
+                    name,
+                    start_date AS startDate,
+                    end_date AS endDate,
+                    created_at AS createdAt
+                FROM elections
+                WHERE id = ?
+            `).get(result.lastInsertRowid);
+
+
+        return res.status(201).json({
+
+            success: true,
+
+            message:
+                "Election created successfully.",
+
+            election
+
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "Create election error:",
+            error
+        );
+
+
+        return res.status(500).json({
+
+            success: false,
+
+            message:
+                "Unable to create election."
+
+        });
+
+    }
+
+}
+
+
+/* =======================================================
+   GET ALL ELECTIONS
+======================================================= */
+
+function getElections(req, res) {
+
+    try {
+
+        ensureElectionTable();
+
+
+        const elections =
+            db.prepare(`
+                SELECT
+                    id,
+                    election_id AS electionId,
+                    name,
+                    start_date AS startDate,
+                    end_date AS endDate,
+                    created_at AS createdAt
+                FROM elections
+                ORDER BY id DESC
+            `).all();
+
+
+        return res.json({
+
+            success: true,
+
+            elections
+
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "Get elections error:",
+            error
+        );
+
+
+        return res.status(500).json({
+
+            success: false,
+
+            message:
+                "Unable to load elections."
+
+        });
+
+    }
+
+}
+
+
+/* =======================================================
+   DELETE ELECTION
+======================================================= */
+
+function deleteElection(req, res) {
+
+    try {
+
+        ensureElectionTable();
+
+
+        const electionId =
+            String(
+                req.params.id || ""
+            ).trim();
+
+
+        if (!electionId) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Election ID is required."
+
+            });
+
+        }
+
+
+        const election =
+            db.prepare(`
+                SELECT
+                    id,
+                    election_id AS electionId,
+                    name
+                FROM elections
+                WHERE election_id = ?
+            `).get(electionId);
+
+
+        if (!election) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message:
+                    "Election not found."
+
+            });
+
+        }
+
+
+        db.prepare(`
+            DELETE FROM elections
+            WHERE election_id = ?
+        `).run(electionId);
+
+
+        return res.json({
+
+            success: true,
+
+            message:
+                "Election deleted successfully.",
+
+            election
+
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "Delete election error:",
+            error
+        );
+
+
+        return res.status(500).json({
+
+            success: false,
+
+            message:
+                "Unable to delete election."
+
+        });
+
+    }
+
+}
+
+
+/* =======================================================
    EXPORTS
 ======================================================= */
 
@@ -1058,6 +1416,12 @@ module.exports = {
 
     forgotAdminPassword,
 
-    resetAdminPassword
+    resetAdminPassword,
+
+    createElection,
+
+    getElections,
+
+    deleteElection
 
 };

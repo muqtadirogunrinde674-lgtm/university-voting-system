@@ -5,9 +5,11 @@ const {
     getAdminSettings,
     updateAdminSettings,
     forgotAdminPassword,
-    resetAdminPassword
+    resetAdminPassword,
+    createElection,
+    getElections,
+    deleteElection
 } = require("./adminController");
-
 
 const router = express.Router();
 
@@ -64,6 +66,39 @@ router.post(
 router.post(
     "/reset-password",
     resetAdminPassword
+);
+
+
+/* =======================================================
+   CREATE ELECTION
+   POST /api/admin/elections
+======================================================= */
+
+router.post(
+    "/elections",
+    createElection
+);
+
+
+/* =======================================================
+   GET ALL ELECTIONS
+   GET /api/admin/elections
+======================================================= */
+
+router.get(
+    "/elections",
+    getElections
+);
+
+
+/* =======================================================
+   DELETE ELECTION
+   DELETE /api/admin/elections/:id
+======================================================= */
+
+router.delete(
+    "/elections/:id",
+    deleteElection
 );
 
 
