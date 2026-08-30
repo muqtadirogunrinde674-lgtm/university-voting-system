@@ -56,16 +56,71 @@ function ensureAdminTable() {
 }
 
 function ensureElectionTable() {
-    db.prepare(`
-        CREATE TABLE IF NOT EXISTS elections (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            election_id TEXT NOT NULL UNIQUE,
-            name TEXT NOT NULL,
-            start_date TEXT NOT NULL,
-            end_date TEXT NOT NULL,
-            created_at TEXT NOT NULL
-        )
-    `).run();
+    const table = db.prepare(`
+        SELECT name
+        FROM sqlite_master
+        WHERE type = 'table'
+        AND name = 'elections'
+    `).get();
+
+    if (!table) {
+        db.prepare(`
+            CREATE TABLE elections (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                election_id TEXT UNIQUE,
+                name TEXT NOT NULL,
+                start_date TEXT NOT NULL,
+                end_date TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            )
+        `).run();
+
+        return;
+    }
+
+    const columns = db.prepare(`
+        PRAGMA table_info(elections)
+    `).all();
+
+    const hasElectionId = columns.some(
+        column => column.name === "election_id"
+    );
+
+    if (!hasElectionId) {
+        db.prepare(`
+            ALTER TABLE elections
+            ADD COLUMN election_id TEXT
+        `).run();
+
+        const elections = db.prepare(`
+            SELECT id
+            FROM elections
+            WHERE election_id IS NULL
+        `).all();
+
+        const updateElectionId = db.prepare(`
+            UPDATE elections
+            SET election_id = ?
+            WHERE id = ?
+        `);
+
+        const updateMany = db.transaction((rows) => {
+            for (const election of rows) {
+                updateElectionId.run(
+                    "ELEC-" + election.id + "-" + crypto.randomBytes(3).toString("hex"),
+                    election.id
+                );
+            }
+        });
+
+        updateMany(elections);
+
+        db.prepare(`
+            CREATE UNIQUE INDEX IF NOT EXISTS
+            idx_elections_election_id
+            ON elections(election_id)
+        `).run();
+    }
 }
 
 function loginAdmin(req, res) {
