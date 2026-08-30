@@ -1,286 +1,701 @@
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
 
-    if (sessionStorage.getItem("studentLoggedIn") !== "true") {
-        window.location.href = "student-login.html";
-        return;
-    }
+    const API_BASE_URL =
+        "https://university-voting-system-p4sn.onrender.com";
 
-    const loading = document.getElementById("loading");
-    const electionList = document.getElementById("electionList");
-    const emptyState = document.getElementById("emptyState");
-    const bottomAction = document.getElementById("bottomAction");
-    const completedCount = document.getElementById("completedCount");
-    const finishBtn = document.getElementById("finishBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
+    const form = document.getElementById("electionForm");
+    const electionName = document.getElementById("electionName");
+    const startDate = document.getElementById("startDate");
+    const startTime = document.getElementById("startTime");
+    const endDate = document.getElementById("endDate");
+    const endTime = document.getElementById("endTime");
 
-    const API_BASE_URL = "https://university-voting-system-p4sn.onrender.com";
+    const electionList =
+        document.getElementById("electionList");
+
+    const emptyState =
+        document.getElementById("emptyState");
+
+    const electionCount =
+        document.getElementById("electionCount");
+
+    const backBtn =
+        document.getElementById("backBtn");
 
     let elections = [];
-    let selections = {};
 
-    try {
-        selections =
-            JSON.parse(
-                localStorage.getItem("univoteSelections")
-            ) || {};
-    } catch {
-        selections = {};
-    }
 
-    try {
+    async function loadElections() {
 
-        const response = await fetch(
-            `${API_BASE_URL}/api/students/elections`
-        );
+        try {
 
-        const data = await response.json();
-
-        if (!response.ok || !data.success) {
-            throw new Error(
-                data.message || "Unable to load elections."
-            );
-        }
-
-        elections = Array.isArray(data.elections)
-            ? data.elections
-            : [];
-
-    } catch (error) {
-
-        console.error("Election loading error:", error);
-
-        loading.style.display = "none";
-
-        await Swal.fire({
-            icon: "error",
-            title: "Unable to Load Elections",
-            text: "We could not connect to the voting server. Please try again.",
-            confirmButtonColor: "#2563eb"
-        });
-
-        return;
-    }
-
-    loading.style.display = "none";
-
-    const now = new Date();
-
-    const activeElections = elections.filter(election => {
-
-        const startValue =
-            election.startDate ||
-            election.start_date;
-
-        const endValue =
-            election.endDate ||
-            election.end_date;
-
-        if (!startValue || !endValue) {
-            return false;
-        }
-
-        const start = new Date(startValue);
-        const end = new Date(endValue);
-
-        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-            return false;
-        }
-
-        start.setHours(0, 0, 0, 0);
-        end.setHours(23, 59, 59, 999);
-
-        return now >= start && now <= end;
-    });
-
-    if (activeElections.length === 0) {
-
-        emptyState.style.display = "block";
-        bottomAction.style.display = "none";
-
-        return;
-    }
-
-    bottomAction.style.display = "flex";
-
-    activeElections.forEach(election => {
-
-        const card = document.createElement("div");
-
-        const isCompleted =
-            Boolean(
-                selections[String(election.id)]
+            const response = await fetch(
+                `${API_BASE_URL}/api/admin/elections`
             );
 
-        card.className = "election-card";
+            const data = await response.json();
 
-        if (isCompleted) {
-            card.classList.add("completed");
-        }
-
-        card.innerHTML = `
-            <div class="election-left">
-
-                <div class="election-icon">
-                    🗳️
-                </div>
-
-                <div class="election-info">
-
-                    <h2>
-                        ${escapeHTML(
-                            election.name || "Election"
-                        )}
-                    </h2>
-
-                    <p>
-                        ${escapeHTML(
-                            election.description || "Election currently available."
-                        )}
-                    </p>
-
-                </div>
-
-            </div>
-
-            <div class="election-right">
-
-                <span class="status ${
-                    isCompleted
-                        ? "completed"
-                        : "available"
-                }">
-
-                    ${
-                        isCompleted
-                            ? "✓ COMPLETED"
-                            : "VOTE NOW"
-                    }
-
-                </span>
-
-                <span class="arrow">
-                    →
-                </span>
-
-            </div>
-        `;
-
-        card.addEventListener("click", () => {
-
-            if (isCompleted) {
-
-                Swal.fire({
-                    icon: "info",
-                    title: "Election Completed",
-                    text: "You have already completed this election.",
-                    confirmButtonColor: "#2563eb"
-                });
-
-                return;
+            if (!response.ok || !data.success) {
+                throw new Error(
+                    data.message ||
+                    "Unable to load elections."
+                );
             }
 
-            localStorage.setItem(
-                "activeElectionId",
-                String(election.id)
+            elections = Array.isArray(data.elections)
+                ? data.elections
+                : [];
+
+            renderElections();
+
+        } catch (error) {
+
+            console.error(
+                "Load elections error:",
+                error
             );
 
-            localStorage.removeItem(
-                "activeVotingPosition"
-            );
+            Swal.fire({
+                icon: "error",
+                title: "Unable to Load Elections",
+                text: error.message ||
+                    "Could not connect to the voting server.",
+                confirmButtonColor: "#2563eb"
+            });
 
-            localStorage.removeItem(
-                "activeCandidateId"
-            );
+        }
 
-            window.location.href = "vote.html";
-        });
+    }
 
-        electionList.appendChild(card);
-    });
 
-    updateProgress();
+    form.addEventListener("submit", async (event) => {
 
-    finishBtn.addEventListener("click", () => {
+        event.preventDefault();
 
-        const completed =
-            Object.keys(selections).length;
+        const name =
+            electionName.value.trim();
 
-        if (completed === 0) {
+        const start =
+            startDate.value;
+
+        const startAt =
+            startTime.value;
+
+        const end =
+            endDate.value;
+
+        const endAt =
+            endTime.value;
+
+
+        if (!name) {
 
             Swal.fire({
                 icon: "warning",
-                title: "No Election Completed",
-                text: "Please complete at least one election before finishing.",
+                title: "Election Name Required",
+                text: "Please enter an election name.",
                 confirmButtonColor: "#2563eb"
             });
 
             return;
         }
 
-        window.location.href = "review-vote.html";
+
+        if (!start || !startAt || !end || !endAt) {
+
+            Swal.fire({
+                icon: "warning",
+                title: "Voting Time Required",
+                text: "Please select the start and end date and time.",
+                confirmButtonColor: "#2563eb"
+            });
+
+            return;
+        }
+
+
+        const startDateTime =
+            `${start}T${startAt}`;
+
+        const endDateTime =
+            `${end}T${endAt}`;
+
+
+        const startObject =
+            new Date(startDateTime);
+
+        const endObject =
+            new Date(endDateTime);
+
+
+        if (
+            isNaN(startObject.getTime()) ||
+            isNaN(endObject.getTime())
+        ) {
+
+            Swal.fire({
+                icon: "error",
+                title: "Invalid Date or Time",
+                text: "Please enter valid voting dates and times.",
+                confirmButtonColor: "#2563eb"
+            });
+
+            return;
+        }
+
+
+        if (endObject <= startObject) {
+
+            Swal.fire({
+                icon: "error",
+                title: "Invalid Voting Period",
+                text: "The end date and time must be after the start date and time.",
+                confirmButtonColor: "#2563eb"
+            });
+
+            return;
+        }
+
+
+        const duplicate =
+            elections.some((election) => {
+
+                return String(election.name || "")
+                    .trim()
+                    .toLowerCase() ===
+                    name.toLowerCase();
+
+            });
+
+
+        if (duplicate) {
+
+            Swal.fire({
+                icon: "warning",
+                title: "Election Already Exists",
+                text: "An election with this name already exists.",
+                confirmButtonColor: "#2563eb"
+            });
+
+            return;
+        }
+
+
+        const createButton =
+            form.querySelector(".create-btn");
+
+
+        if (createButton) {
+
+            createButton.disabled = true;
+            createButton.textContent =
+                "CREATING...";
+
+        }
+
+
+        try {
+
+            const response = await fetch(
+                `${API_BASE_URL}/api/admin/elections`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        name: name,
+                        startDate: startDateTime,
+                        endDate: endDateTime
+                    })
+                }
+            );
+
+
+            const responseText =
+                await response.text();
+
+
+            let data;
+
+            try {
+
+                data =
+                    JSON.parse(responseText);
+
+            } catch {
+
+                throw new Error(
+                    `Server returned an invalid response (${response.status}).`
+                );
+
+            }
+
+
+            if (!response.ok || !data.success) {
+
+                throw new Error(
+                    data.message ||
+                    `Election creation failed (${response.status}).`
+                );
+
+            }
+
+
+            form.reset();
+
+            await loadElections();
+
+
+            Swal.fire({
+                icon: "success",
+                title: "Election Created Successfully!",
+                text:
+                    `${name} has been added to the system.`,
+                confirmButtonColor: "#2563eb"
+            });
+
+
+        } catch (error) {
+
+            console.error(
+                "Create election error:",
+                error
+            );
+
+            Swal.fire({
+                icon: "error",
+                title: "Election Creation Failed",
+                text:
+                    error.message ||
+                    "Unable to create election.",
+                confirmButtonColor: "#2563eb"
+            });
+
+
+        } finally {
+
+            if (createButton) {
+
+                createButton.disabled = false;
+                createButton.textContent =
+                    "CREATE ELECTION";
+
+            }
+
+        }
+
     });
 
-    logoutBtn.addEventListener("click", () => {
 
-        Swal.fire({
-            icon: "question",
-            title: "Logout?",
-            text: "Are you sure you want to logout?",
-            showCancelButton: true,
-            confirmButtonText: "Logout",
-            cancelButtonText: "Cancel",
-            confirmButtonColor: "#dc2626",
-            cancelButtonColor: "#6b7280",
-            reverseButtons: true
-        }).then(result => {
+    function renderElections() {
+
+        electionList.innerHTML = "";
+
+        electionCount.textContent =
+            elections.length;
+
+
+        if (elections.length === 0) {
+
+            emptyState.style.display =
+                "block";
+
+            return;
+        }
+
+
+        emptyState.style.display =
+            "none";
+
+
+        elections
+            .slice()
+            .reverse()
+            .forEach((election) => {
+
+                const card =
+                    document.createElement("div");
+
+                card.className =
+                    "election-card";
+
+
+                const start =
+                    election.startDate ||
+                    election.start_date;
+
+                const end =
+                    election.endDate ||
+                    election.end_date;
+
+
+                const status =
+                    getElectionStatus(
+                        start,
+                        end
+                    );
+
+
+                card.innerHTML = `
+
+                    <div class="election-info">
+
+                        <h3>
+                            ${escapeHTML(
+                                election.name
+                            )}
+                        </h3>
+
+                        <p>
+                            ${formatDateTime(start)}
+                            —
+                            ${formatDateTime(end)}
+                        </p>
+
+                    </div>
+
+
+                    <div class="election-actions">
+
+                        <span
+                            class="election-status ${status.className}"
+                        >
+                            ${status.text}
+                        </span>
+
+
+                        <button
+                            type="button"
+                            class="delete-btn"
+                            data-id="${escapeHTML(
+                                election.id
+                            )}"
+                        >
+                            🗑️ Delete
+                        </button>
+
+                    </div>
+
+                `;
+
+
+                electionList.appendChild(card);
+
+            });
+
+    }
+
+
+    electionList.addEventListener(
+        "click",
+        async (event) => {
+
+            const deleteButton =
+                event.target.closest(
+                    ".delete-btn"
+                );
+
+
+            if (!deleteButton) {
+                return;
+            }
+
+
+            const electionId =
+                deleteButton.dataset.id;
+
+
+            const election =
+                elections.find(
+                    item =>
+                        String(item.id) ===
+                        String(electionId)
+                );
+
+
+            if (!election) {
+
+                Swal.fire({
+                    icon: "error",
+                    title: "Election Not Found",
+                    text:
+                        "This election could not be found.",
+                    confirmButtonColor: "#2563eb"
+                });
+
+                return;
+            }
+
+
+            const result =
+                await Swal.fire({
+
+                    icon: "warning",
+
+                    title:
+                        "Delete Election?",
+
+                    html: `
+                        <p style="font-size:13px;margin-bottom:8px;">
+                            You are about to delete:
+                        </p>
+
+                        <strong style="font-size:16px;">
+                            ${escapeHTML(
+                                election.name
+                            )}
+                        </strong>
+
+                        <p style="font-size:11px;color:#777;margin-top:12px;">
+                            This election will be permanently removed.
+                        </p>
+                    `,
+
+                    showCancelButton:
+                        true,
+
+                    confirmButtonText:
+                        "Yes, Delete",
+
+                    cancelButtonText:
+                        "Cancel",
+
+                    confirmButtonColor:
+                        "#dc2626",
+
+                    cancelButtonColor:
+                        "#6b7280",
+
+                    reverseButtons:
+                        true
+
+                });
+
 
             if (!result.isConfirmed) {
                 return;
             }
 
-            sessionStorage.removeItem(
-                "studentLoggedIn"
-            );
 
-            sessionStorage.removeItem(
-                "studentUsername"
-            );
+            try {
 
-            localStorage.removeItem(
-                "univoteSelections"
-            );
+                const response =
+                    await fetch(
+                        `${API_BASE_URL}/api/admin/elections/${encodeURIComponent(
+                            election.electionId ||
+                            election.id
+                        )}`,
+                        {
+                            method: "DELETE",
 
-            localStorage.removeItem(
-                "activeElectionId"
-            );
+                            headers: {
+                                "Accept":
+                                    "application/json"
+                            }
+                        }
+                    );
 
-            localStorage.removeItem(
-                "activeVotingPosition"
-            );
 
-            localStorage.removeItem(
-                "activeCandidateId"
-            );
+                const responseText =
+                    await response.text();
 
-            window.location.href =
-                "student-login.html";
-        });
-    });
 
-    function updateProgress() {
+                let data;
 
-        completedCount.textContent =
-            Object.keys(selections).length;
+                try {
+
+                    data =
+                        JSON.parse(responseText);
+
+                } catch {
+
+                    throw new Error(
+                        `Server returned an invalid response (${response.status}).`
+                    );
+
+                }
+
+
+                if (!response.ok || !data.success) {
+
+                    throw new Error(
+                        data.message ||
+                        "Unable to delete election."
+                    );
+
+                }
+
+
+                await loadElections();
+
+
+                Swal.fire({
+                    icon: "success",
+                    title: "Election Deleted",
+                    text:
+                        "The election has been deleted successfully.",
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+
+
+            } catch (error) {
+
+                console.error(
+                    "Delete election error:",
+                    error
+                );
+
+
+                Swal.fire({
+                    icon: "error",
+                    title: "Delete Failed",
+                    text:
+                        error.message ||
+                        "Unable to delete election.",
+                    confirmButtonColor:
+                        "#2563eb"
+                });
+
+            }
+
+        }
+    );
+
+
+    function getElectionStatus(start, end) {
+
+        const now =
+            new Date();
+
+        const startDateValue =
+            new Date(start);
+
+        const endDateValue =
+            new Date(end);
+
+
+        if (
+            isNaN(startDateValue.getTime()) ||
+            isNaN(endDateValue.getTime())
+        ) {
+
+            return {
+                text: "INVALID",
+                className: "status-ended"
+            };
+
+        }
+
+
+        if (now < startDateValue) {
+
+            return {
+                text: "UPCOMING",
+                className: "status-upcoming"
+            };
+
+        }
+
+
+        if (
+            now >= startDateValue &&
+            now <= endDateValue
+        ) {
+
+            return {
+                text: "ACTIVE",
+                className: "status-active"
+            };
+
+        }
+
+
+        return {
+            text: "ENDED",
+            className: "status-ended"
+        };
+
     }
+
+
+    function formatDateTime(value) {
+
+        if (!value) {
+            return "";
+        }
+
+
+        const date =
+            new Date(value);
+
+
+        if (isNaN(date.getTime())) {
+            return value;
+        }
+
+
+        return date.toLocaleString(
+            "en-NG",
+            {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true
+            }
+        );
+
+    }
+
 
     function escapeHTML(value) {
 
         return String(value ?? "")
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
     }
+
+
+    if (backBtn) {
+
+        backBtn.addEventListener(
+            "click",
+            () => {
+
+                window.location.href =
+                    "admin-dashboard.html";
+
+            }
+        );
+
+    }
+
+
+    loadElections();
 
 });
