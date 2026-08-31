@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
     /* ===============================
        ADMIN LOGIN CHECK
@@ -10,6 +10,14 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = "admin-login.html";
         return;
     }
+
+
+    /* ===============================
+       API
+    =============================== */
+
+    const API_BASE_URL =
+        "https://university-voting-system-p4sn.onrender.com";
 
 
     /* ===============================
@@ -45,14 +53,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* ===============================
-       LOAD DATA
+       DATA
     =============================== */
 
-    let elections =
-        JSON.parse(
-            localStorage.getItem("univoteElections")
-        ) || [];
-
+    let elections = [];
 
     let candidates =
         JSON.parse(
@@ -61,32 +65,104 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* ===============================
-       LOAD ELECTIONS
+       LOAD ELECTIONS FROM SERVER
     =============================== */
 
-    function loadElections() {
+    async function loadElections() {
 
         electionSelect.innerHTML = `
             <option value="">
-                Select Election
+                Loading Elections...
             </option>
         `;
 
+        try {
 
-        elections.forEach(election => {
+            const response = await fetch(
+                `${API_BASE_URL}/api/admin/elections`
+            );
 
-            const option =
-                document.createElement("option");
+            const data = await response.json();
 
-            option.value =
-                election.id;
+            if (!response.ok || !data.success) {
+                throw new Error(
+                    data.message ||
+                    "Unable to load elections."
+                );
+            }
 
-            option.textContent =
-                `${election.personName || election.name || "Election"} — ${election.level || ""} — ${election.department || ""}`;
+            elections =
+                Array.isArray(data.elections)
+                    ? data.elections
+                    : [];
 
-            electionSelect.appendChild(option);
 
-        });
+            electionSelect.innerHTML = `
+                <option value="">
+                    Select Election
+                </option>
+            `;
+
+
+            elections.forEach(election => {
+
+                const option =
+                    document.createElement("option");
+
+                option.value =
+                    election.id;
+
+                option.textContent =
+                    election.name ||
+                    "Election";
+
+                electionSelect.appendChild(
+                    option
+                );
+
+            });
+
+
+            if (elections.length === 0) {
+
+                electionSelect.innerHTML = `
+                    <option value="">
+                        No Elections Available
+                    </option>
+                `;
+
+            }
+
+
+        } catch (error) {
+
+            console.error(
+                "Load elections error:",
+                error
+            );
+
+            electionSelect.innerHTML = `
+                <option value="">
+                    Unable to Load Elections
+                </option>
+            `;
+
+
+            Swal.fire({
+
+                icon: "error",
+
+                title: "Unable to Load Elections",
+
+                text:
+                    error.message ||
+                    "Could not connect to the voting server.",
+
+                confirmButtonColor: "#2563eb"
+
+            });
+
+        }
 
     }
 
@@ -209,7 +285,9 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
 
 
-        candidateInputs.appendChild(row);
+        candidateInputs.appendChild(
+            row
+        );
 
 
         updateCandidateNumbers();
@@ -226,47 +304,48 @@ document.addEventListener("DOMContentLoaded", () => {
         event => {
 
             if (
-                event.target.classList.contains(
+                !event.target.classList.contains(
                     "remove-candidate"
                 )
             ) {
-
-                const rows =
-                    candidateInputs.querySelectorAll(
-                        ".candidate-row"
-                    );
+                return;
+            }
 
 
-                /* Keep at least one row */
-
-                if (rows.length === 1) {
-
-                    Swal.fire({
-
-                        icon: "info",
-
-                        title: "At Least One Candidate",
-
-                        text:
-                            "You need at least one candidate.",
-
-                        confirmButtonColor:
-                            "#2563eb"
-
-                    });
-
-                    return;
-                }
+            const rows =
+                candidateInputs.querySelectorAll(
+                    ".candidate-row"
+                );
 
 
-                event.target
-                    .closest(".candidate-row")
-                    .remove();
+            if (rows.length === 1) {
 
+                Swal.fire({
 
-                updateCandidateNumbers();
+                    icon: "info",
+
+                    title:
+                        "At Least One Candidate",
+
+                    text:
+                        "You need at least one candidate.",
+
+                    confirmButtonColor:
+                        "#2563eb"
+
+                });
+
+                return;
 
             }
+
+
+            event.target
+                .closest(".candidate-row")
+                .remove();
+
+
+            updateCandidateNumbers();
 
         }
     );
@@ -334,10 +413,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     icon: "warning",
 
-                    title: "Incomplete Information",
+                    title:
+                        "Incomplete Information",
 
                     text:
                         "Please select an election and enter the position.",
+
+                    confirmButtonColor:
+                        "#2563eb"
+
+                });
+
+                return;
+
+            }
+
+
+            const election =
+                elections.find(
+                    item =>
+                        String(item.id) ===
+                        String(electionId)
+                );
+
+
+            if (!election) {
+
+                Swal.fire({
+
+                    icon: "error",
+
+                    title:
+                        "Election Not Found",
+
+                    text:
+                        "The selected election could not be found.",
 
                     confirmButtonColor:
                         "#2563eb"
@@ -432,14 +542,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
 
-                const election =
-                    elections.find(
-                        item =>
-                            String(item.id) ===
-                            String(electionId)
-                    );
-
-
                 newCandidates.push({
 
                     id:
@@ -463,16 +565,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         department,
 
                     electionId:
-                        electionId,
+                        election.id,
 
                     electionName:
-                        election
-                            ? (
-                                election.personName ||
-                                election.name ||
-                                "Election"
-                            )
-                            : "",
+                        election.name ||
+                        "Election",
 
                     position:
                         position,
@@ -489,7 +586,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             /* ===============================
-               SAVE
+               SAVE CANDIDATES
             =============================== */
 
             candidates.push(
@@ -499,11 +596,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
             localStorage.setItem(
                 "univoteCandidates",
-                JSON.stringify(candidates)
+                JSON.stringify(
+                    candidates
+                )
             );
 
 
-            /* RESET */
+            /* ===============================
+               RESET
+            =============================== */
 
             form.reset();
 
@@ -511,11 +612,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
             addCandidateRow();
 
-
             renderCandidates();
 
 
-            /* SUCCESS */
+            /* ===============================
+               SUCCESS
+            =============================== */
 
             Swal.fire({
 
@@ -525,7 +627,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     "Candidates Added! 🎉",
 
                 html:
-                    `<strong>${newCandidates.length}</strong> candidate${newCandidates.length === 1 ? "" : "s"} added for <strong>${escapeHTML(position)}</strong>.`,
+                    `<strong>${newCandidates.length}</strong> candidate${newCandidates.length === 1 ? "" : "s"} added for <strong>${escapeHTML(position)}</strong> in <strong>${escapeHTML(election.name)}</strong>.`,
 
                 confirmButtonColor:
                     "#2563eb"
@@ -592,10 +694,6 @@ document.addEventListener("DOMContentLoaded", () => {
             "none";
 
 
-        /* ===============================
-           GROUP BY ELECTION + POSITION
-        =============================== */
-
         const groups = {};
 
 
@@ -603,7 +701,8 @@ document.addEventListener("DOMContentLoaded", () => {
             candidate => {
 
                 const electionId =
-                    candidate.electionId || "unknown";
+                    candidate.electionId ||
+                    "unknown";
 
 
                 const position =
@@ -755,7 +854,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                                 <button
                                     class="delete-btn"
-                                    data-id="${candidate.id}"
+                                    data-id="${escapeHTML(
+                                        candidate.id
+                                    )}"
                                 >
                                     Delete
                                 </button>
@@ -764,7 +865,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                             candidatesContainer
-                                .appendChild(item);
+                                .appendChild(
+                                    item
+                                );
 
                         }
                     );
@@ -967,7 +1070,7 @@ document.addEventListener("DOMContentLoaded", () => {
        INITIALIZE
     =============================== */
 
-    loadElections();
+    await loadElections();
 
     renderCandidates();
 
